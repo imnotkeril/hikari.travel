@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { Star, Calendar, Users, MapPin } from 'lucide-react';
 
 const TourCard = ({ tour, bookTour, translations, currentLang }) => {
-  const navigate = useNavigate();
+  console.log("TourCard rendering:", tour.id);
+  console.log("Tour image path:", tour.image);
+
+  // Затем проверим существование файла явно
+  const imagePath = tour.image || `/images/tours/${tour.id}.jpg`;
+  console.log("Using image path:", imagePath);
 
   // Получаем нужные переводы в зависимости от текущего языка
   const t = {
@@ -26,16 +31,16 @@ const TourCard = ({ tour, bookTour, translations, currentLang }) => {
 
   // Функция для обработки ошибок загрузки изображений
   const handleImageError = (e) => {
+    console.error(`Error loading image for tour ${tour.id}`);
     e.target.onerror = null; // Предотвращает бесконечный цикл
-    e.target.src = tour.image || "images/tours/home.jpg";
+    e.target.src = "/images/default-tour.jpg"; // Используем гарантированно существующее запасное изображение
   };
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-48">
         <img
-          // Пробуем несколько источников
-          src={tour.image || `/images/tours/${tour.id}.jpg` || `/images/tours/${tour.id}.png`}
+          src={tour.image || `/images/tours/${tour.id}.jpg`}
           alt={tour.title[currentLang]}
           className="w-full h-full object-cover"
           onError={handleImageError}
