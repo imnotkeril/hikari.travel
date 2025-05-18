@@ -500,79 +500,19 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
           {filteredTours.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredTours.map((tour) => (
-                <div key={tour.id} className="bg-white rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
-                  <div className="relative h-60">
-                    <img src={tour.image} alt={tour.title[currentLang]} className="w-full h-full object-cover" />
-                    <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
-                      {t.from} ${tour.price}
-                    </div>
-                    {tour.tags && tour.tags.length > 0 && (
-                      <div className="absolute bottom-4 left-4 flex flex-wrap gap-1">
-                        {tour.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="bg-pink-500 bg-opacity-80 text-white text-xs px-2 py-1 rounded-full"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{tour.title[currentLang]}</h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">{tour.description[currentLang]}</p>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span>{tour.duration} {t.days}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="w-4 h-4 mr-1" />
-                        <span>{tour.groupSize} {t.people}</span>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => {
-                          // Преобразуем многоязычный тур в локализованный для текущего языка
-                          const localizedTour = {
-                            ...tour,
-                            title: tour.title[currentLang],
-                            description: tour.description[currentLang],
-                            routeDescription: tour.routeDescription ? tour.routeDescription[currentLang] : '',
-                            seasonDescription: tour.seasonDescription ? tour.seasonDescription[currentLang] : '',
-                            // Добавляем текущий язык
-                            currentLang: currentLang
-                          };
-                          bookTour(localizedTour);
-                        }}
-                        className="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
-                      >
-                        {t.bookNow}
-                      </button>
-                      <button
-                        onClick={() => {
-                          // Преобразуем многоязычный тур в локализованный для текущего языка
-                          const localizedTour = {
-                            ...tour,
-                            title: tour.title[currentLang],
-                            description: tour.description[currentLang],
-                            routeDescription: tour.routeDescription ? tour.routeDescription[currentLang] : '',
-                            seasonDescription: tour.seasonDescription ? tour.seasonDescription[currentLang] : '',
-                            // Добавляем текущий язык
-                            currentLang: currentLang
-                          };
-                          bookTour(localizedTour);
-                          navigateTo('tour');
-                        }}
-                        className="flex-1 border border-pink-500 text-pink-500 hover:bg-pink-50 font-bold py-2 px-4 rounded"
-                      >
-                        {t.viewDetails}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  bookTour={(localizedTour) => {
+                    bookTour(localizedTour);
+                  }}
+                  viewTourDetails={(localizedTour) => {
+                    bookTour(localizedTour);
+                    navigateTo('tour');
+                  }}
+                  translations={translations}
+                  currentLang={currentLang}
+                />
               ))}
             </div>
           ) : (

@@ -8,6 +8,7 @@ import {
   Calendar,
   Users
 } from 'lucide-react';
+import TourCard from '../components/TourCard';
 import { toursData } from '../data/toursData';
 
 function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
@@ -131,8 +132,8 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         subtitle: 'From cherry blossom viewing to authentic ryokan stays'
       },
       testimonials: {
-        title: 'Testimonials',
-        viewAll: 'View All Testimonials',
+        title: 'Reviews',
+        viewAll: 'View All Reviews',
         testimonial1: {
           text: 'Our tour was wonderful! The guide knew all the hidden spots and helped with the language. A true cultural immersion.',
           name: 'Anna Smith',
@@ -378,82 +379,37 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800">{t.featuredTours.title}</h2>
-            <a href="#" onClick={() => navigateTo('tours')} className="text-pink-500 hover:text-pink-600 flex items-center">
+            <a
+              onClick={() => navigateTo('tours')}
+              className="text-pink-500 hover:text-pink-600 flex items-center cursor-pointer"
+            >
               {t.featuredTours.viewAll}
               <ArrowRight className="ml-1 w-4 h-4" />
             </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {(featuredTours || []).map((tour) => {
-              // Проверка на существование тура и его свойств
-              if (!tour || !tour.title) {
-                console.error("Invalid tour data:", tour);
-                return null; // Пропускаем невалидные туры
-              }
-
-              return (
-                <div key={tour.id || Math.random().toString()} className="bg-white rounded-lg overflow-hidden shadow-lg">
-                  <div className="relative h-48">
-                    <img
-                      src={tour.image || "https://source.unsplash.com/featured/?japan"}
-                      alt={tour.title[currentLang] || "Tour"}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
-                      ${tour.price || 0}
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      {tour.title[currentLang] || `${t.featuredTours.title} ${tour.id || ""}`}
-                    </h3>
-                    <div className="flex items-center mb-2">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-500" />
-                        <span className="ml-1 text-gray-700">{4.8}</span>
-                      </div>
-                      <span className="mx-2 text-gray-400">•</span>
-                      <span className="text-gray-600">{24} {t.testimonials.title.toLowerCase()}</span>
-                    </div>
-                    <div className="flex justify-between mb-4">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span>{tour.duration || 0} {t.featuredTours.days}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="w-4 h-4 mr-1" />
-                        <span>{tour.groupSize || 0} {t.featuredTours.people}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        // Преобразуем многоязычный тур в локализованный для текущего языка
-                        const localizedTour = {
-                          ...tour,
-                          title: tour.title[currentLang] || `${t.featuredTours.title} ${tour.id || ""}`,
-                          description: tour.description && tour.description[currentLang]
-                            ? tour.description[currentLang]
-                            : '',
-                          routeDescription: tour.routeDescription && tour.routeDescription[currentLang]
-                            ? tour.routeDescription[currentLang]
-                            : '',
-                          seasonDescription: tour.seasonDescription && tour.seasonDescription[currentLang]
-                            ? tour.seasonDescription[currentLang]
-                            : '',
-                          // Добавляем текущий язык
-                          currentLang: currentLang
-                        };
-                        bookTour(localizedTour);
-                      }}
-                      className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                      {t.featuredTours.bookNow}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {/* Фильтруем только популярные туры и берем первые 3 */}
+            {(toursData || [])
+              .filter(tour =>
+                tour.type === 'popular' ||
+                (tour.tags && tour.tags[currentLang] && tour.tags[currentLang].includes('популярное'))
+              )
+              .slice(0, 3)
+              .map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  bookTour={bookTour}
+                  viewTourDetails={() => {
+                    // Сохраняем выбранный тур и переходим на страницу детального просмотра
+                    bookTour(tour);
+                    navigateTo('tour');
+                  }}
+                  translations={translations}
+                  currentLang={currentLang}
+                />
+              ))}
           </div>
         </div>
       </section>

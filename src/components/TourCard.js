@@ -1,52 +1,86 @@
 // src/components/TourCard.js
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Star, Calendar, Users, MapPin } from 'lucide-react';
+import { Calendar, Users, MapPin, Star } from 'lucide-react';
 
-const TourCard = ({ tour, bookTour, translations, currentLang }) => {
+const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }) => {
   console.log("TourCard rendering:", tour.id);
-  console.log("Tour image path:", tour.image);
-
-  // Затем проверим существование файла явно
-  const imagePath = tour.image || `/images/tours/${tour.id}.jpg`;
-  console.log("Using image path:", imagePath);
 
   // Получаем нужные переводы в зависимости от текущего языка
-  const t = {
-    days: translations[currentLang].featuredTours.days,
-    people: translations[currentLang].featuredTours.people,
-    bookNow: translations[currentLang].featuredTours.bookNow,
-    reviews: translations[currentLang].testimonials.title.toLowerCase()
+  let t = {};
+
+  try {
+    // Если передается полный объект translations
+    t = {
+      days: translations[currentLang].featuredTours.days,
+      people: translations[currentLang].featuredTours.people,
+      bookNow: translations[currentLang].featuredTours.bookNow,
+      viewDetails: translations[currentLang].viewDetails || "View Details",
+      reviews: translations[currentLang].testimonials?.title?.toLowerCase() || "reviews",
+      from: translations[currentLang].from || "from"
+    };
+  } catch (error) {
+    console.log("Translation parsing error:", error);
+    // Если передается только объект переводов для конкретного компонента
+    t = {
+      days: translations.days || "days",
+      people: translations.people || "people",
+      bookNow: translations.bookNow || "Book Now",
+      viewDetails: translations.viewDetails || "View Details",
+      reviews: translations.reviews || "reviews",
+      from: translations.from || "from"
+    };
+  }
+
+  // Подготовка локализованных данных о туре
+  const localizedTour = () => {
+    return {
+      ...tour,
+      title: tour.title?.[currentLang] || "Tour",
+      description: tour.description?.[currentLang] || "",
+      routeDescription: tour.routeDescription?.[currentLang] || "",
+      seasonDescription: tour.seasonDescription?.[currentLang] || "",
+      // Добавляем текущий язык
+      currentLang: currentLang
+    };
   };
 
   const handleBookTour = () => {
-    bookTour(tour);
-    navigate('/booking');
+    bookTour(localizedTour());
   };
 
   const handleTourDetails = () => {
-    bookTour(tour);
-    navigate(`/tour/${tour.id}`);
+    if (viewTourDetails) {
+      viewTourDetails(localizedTour());
+    } else {
+      bookTour(localizedTour());
+    }
   };
 
-  // Функция для обработки ошибок загрузки изображений
-  const handleImageError = (e) => {
-    console.error(`Error loading image for tour ${tour.id}`);
-    e.target.onerror = null; // Предотвращает бесконечный цикл
-    e.target.src = "/images/default-tour.jpg"; // Используем гарантированно существующее запасное изображение
+  // Функция для обработки клика на карточку
+  const handleCardClick = (e) => {
+    // Проверяем, что клик был не по кнопкам
+    if (!e.target.closest('button')) {
+      handleTourDetails();
+    }
   };
+
+  // Формируем URL изображения точно так же, как в TourDetailsPage
+  const imageUrl = `/images/tours/${tour.id}.png`;
+
+  const rating = tour.rating || 4.8; // Дефолтное значение
+  const reviewCount = tour.reviewCount || 24; // Дефолтное значение
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="relative h-48">
-        <img
-          src={tour.image || `/images/tours/${tour.id}.jpg`}
-          alt={tour.title[currentLang]}
-          className="w-full h-full object-cover"
-          onError={handleImageError}
-        />
+    <div
+      className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer"
+      onClick={handleCardClick}
+    >
+      <div
+        className="relative h-60 bg-gray-200 bg-cover bg-center"
+        style={{ backgroundImage: `url(${imageUrl})` }}
+      >
         <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
-          ${tour.price}
+          {t.from} ${tour.price}
         </div>
 
         {/* Отображение тегов */}
@@ -64,7 +98,7 @@ const TourCard = ({ tour, bookTour, translations, currentLang }) => {
         )}
       </div>
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{tour.title[currentLang]}</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{tour.title?.[currentLang] || "Tour"}</h3>
 
         {/* Отображение маршрутов (локаций) */}
         {tour.route && tour.route[currentLang] && (
@@ -86,13 +120,18 @@ const TourCard = ({ tour, bookTour, translations, currentLang }) => {
           </div>
         )}
 
+        {/* Описание тура */}
+        {tour.description && tour.description[currentLang] && (
+          <p className="text-gray-600 mb-4 line-clamp-3">{tour.description[currentLang]}</p>
+        )}
+
         <div className="flex items-center mb-2">
           <div className="flex items-center">
             <Star className="w-4 h-4 text-yellow-500" />
-            <span className="ml-1 text-gray-700">{tour.rating}</span>
+            <span className="ml-1 text-gray-700">{rating}</span>
           </div>
           <span className="mx-2 text-gray-400">•</span>
-          <span className="text-gray-600">{tour.reviewCount} {t.reviews}</span>
+          <span className="text-gray-600">{reviewCount} {t.reviews}</span>
         </div>
         <div className="flex justify-between mb-4">
           <div className="flex items-center text-gray-600">
@@ -104,7 +143,7 @@ const TourCard = ({ tour, bookTour, translations, currentLang }) => {
             <span>{tour.groupSize} {t.people}</span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex space-x-2">
           <button
             onClick={handleBookTour}
             className="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
@@ -115,7 +154,7 @@ const TourCard = ({ tour, bookTour, translations, currentLang }) => {
             onClick={handleTourDetails}
             className="flex-1 border border-pink-500 text-pink-500 hover:bg-pink-50 font-bold py-2 px-4 rounded"
           >
-            {t.viewDetails || "View Details"}
+            {t.viewDetails}
           </button>
         </div>
       </div>

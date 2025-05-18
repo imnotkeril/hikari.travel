@@ -160,8 +160,8 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
         privacy: 'Privacy Policy'
       },
       testimonials: {
-        title: 'Testimonials',
-        viewAll: 'View All Testimonials',
+        title: 'Reviews',
+        viewAll: 'View All Reviews',
         showMore: 'Show More',
         hideMore: 'Hide',
         testimonial1: {
