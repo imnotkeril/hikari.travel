@@ -12,7 +12,7 @@ export const AppProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [selectedTour, setSelectedTour] = useState(null);
   const [bookingData, setBookingData] = useState(null);
-  
+
   // Переключение между страницами
   const navigateTo = (page) => {
     setCurrentPage(page);
@@ -50,7 +50,7 @@ export const AppProvider = ({ children }) => {
     // В реальном приложении здесь был бы запрос к API для сохранения бронирования
     navigateTo("booking-confirmation");
   };
-  
+
   // Значение контекста, которое будет доступно компонентам
   const contextValue = {
     currentPage,

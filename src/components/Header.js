@@ -5,7 +5,7 @@ import LanguageSelector from './LanguageSelector';
 
 function Header({ currentLang, setCurrentLang, navigateTo }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   // Переводы для меню
   const translations = {
     ru: {
@@ -41,7 +41,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
   };
 
   const t = translations[currentLang];
-  
+
   const handleNavigation = (page, event) => {
     if (event) event.preventDefault();
     navigateTo(page);
@@ -63,7 +63,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             <img src="/images/logo.png" alt="Hikari Travel" className="h-10 md:h-12 lg:h-14" />
           </a>
         </div>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-10">
             <a href="#" onClick={(e) => handleNavigation('home', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.home}</a>
@@ -72,27 +72,27 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             <a href="#" onClick={(e) => handleNavigation('blog', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.blog}</a>
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.contact}</a>
           </nav>
-          
+
           <div className="flex items-center">
             {/* Language Selector */}
             <div className="mr-4">
-              <LanguageSelector 
-                currentLang={currentLang} 
+              <LanguageSelector
+                currentLang={currentLang}
                 setCurrentLang={handleLanguageChange}
               />
             </div>
-            
+
             {/* Book Now Button - Desktop */}
-            <button 
+            <button
               onClick={(e) => handleNavigation('booking', e)}
               className="hidden md:block bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
             >
               {t.bookNow}
             </button>
-            
+
             {/* Mobile menu button */}
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden text-gray-600 hover:text-pink-500"
             >
               {isMenuOpen ? (
@@ -103,7 +103,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
@@ -112,7 +112,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             <a href="#" onClick={(e) => handleNavigation('about', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.about}</a>
             <a href="#" onClick={(e) => handleNavigation('blog', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.blog}</a>
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.contact}</a>
-            <button 
+            <button
               onClick={(e) => handleNavigation('booking', e)}
               className="mt-3 w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
             >
