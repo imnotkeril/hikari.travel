@@ -1,14 +1,12 @@
 // src/components/ExchangeRateWidget.js
 import React, { useState, useEffect } from 'react';
 import { DollarSign, RefreshCcw } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
 
-function ExchangeRateWidget() {
-  const { currentLang } = useAppContext();
+function ExchangeRateWidget({ baseCurrency = "USD", currentLang = "ru" }) {
   const [rates, setRates] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [baseCurrency, setBaseCurrency] = useState('USD');
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [selectedBaseCurrency, setSelectedBaseCurrency] = useState(baseCurrency);
+  const [lastUpdated, setLastUpdated] = useState(new Date())
 
   // Переводы
   const translations = {
@@ -73,37 +71,37 @@ function ExchangeRateWidget() {
   // Пример данных о курсах валют (в реальном приложении здесь был бы API запрос)
   useEffect(() => {
     fetchRates();
-  }, [baseCurrency]);
+  }, [selectedBaseCurrency]);
 
   const fetchRates = () => {
     setLoading(true);
     // Имитация запроса к API обмена валют
     setTimeout(() => {
       const mockRates = {
-        base: baseCurrency,
+        base: selectedBaseCurrency,
         rates: {
-          USD: baseCurrency === 'USD' ? 1 : 0.0073,
-          EUR: baseCurrency === 'EUR' ? 1 : 0.0068,
-          GBP: baseCurrency === 'GBP' ? 1 : 0.0057,
-          JPY: baseCurrency === 'JPY' ? 1 : 1.0,
-          RUB: baseCurrency === 'RUB' ? 1 : 0.69,
-          CNY: baseCurrency === 'CNY' ? 1 : 0.052,
-          AUD: baseCurrency === 'AUD' ? 1 : 0.011,
-          CAD: baseCurrency === 'CAD' ? 1 : 0.01
+          USD: selectedBaseCurrency === 'USD' ? 1 : 0.0073,
+          EUR: selectedBaseCurrency === 'EUR' ? 1 : 0.0068,
+          GBP: selectedBaseCurrency === 'GBP' ? 1 : 0.0057,
+          JPY: selectedBaseCurrency === 'JPY' ? 1 : 1.0,
+          RUB: selectedBaseCurrency === 'RUB' ? 1 : 0.69,
+          CNY: selectedBaseCurrency === 'CNY' ? 1 : 0.052,
+          AUD: selectedBaseCurrency === 'AUD' ? 1 : 0.011,
+          CAD: selectedBaseCurrency === 'CAD' ? 1 : 0.01
         }
       };
-      
+
       // Пересчитываем курсы относительно базовой валюты
-      if (baseCurrency !== 'USD') {
-        const baseRate = mockRates.rates[baseCurrency];
+      if (selectedBaseCurrency !== 'USD') {
+        const baseRate = mockRates.rates[selectedBaseCurrency];
         Object.keys(mockRates.rates).forEach(currency => {
-          if (currency !== baseCurrency) {
+          if (currency !== selectedBaseCurrency) {
             mockRates.rates[currency] = mockRates.rates[currency] / baseRate;
           }
         });
-        mockRates.rates[baseCurrency] = 1;
+        mockRates.rates[selectedBaseCurrency] = 1;
       }
-      
+
       setRates(mockRates);
       setLastUpdated(new Date());
       setLoading(false);
@@ -113,8 +111,8 @@ function ExchangeRateWidget() {
   // Форматирование даты
   const formatDate = (date) => {
     return date.toLocaleString(
-      currentLang === 'ru' ? 'ru-RU' : 
-      currentLang === 'ja' ? 'ja-JP' : 
+      currentLang === 'ru' ? 'ru-RU' :
+      currentLang === 'ja' ? 'ja-JP' :
       'en-US'
     );
   };
@@ -122,8 +120,8 @@ function ExchangeRateWidget() {
   // Форматирование числа
   const formatNumber = (num) => {
     return num.toLocaleString(
-      currentLang === 'ru' ? 'ru-RU' : 
-      currentLang === 'ja' ? 'ja-JP' : 
+      currentLang === 'ru' ? 'ru-RU' :
+      currentLang === 'ja' ? 'ja-JP' :
       'en-US',
       { minimumFractionDigits: 2, maximumFractionDigits: 4 }
     );
@@ -131,14 +129,14 @@ function ExchangeRateWidget() {
 
   // Обработчик смены базовой валюты
   const handleBaseCurrencyChange = (e) => {
-    setBaseCurrency(e.target.value);
+    setSelectedBaseCurrency(e.target.value);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium text-gray-800">{t.title}</h3>
-        <button 
+        <button
           onClick={fetchRates}
           className="text-pink-500 hover:text-pink-600 flex items-center text-sm"
         >
@@ -146,7 +144,7 @@ function ExchangeRateWidget() {
           {t.refresh}
         </button>
       </div>
-      
+
       {loading ? (
         <div className="flex justify-center items-center h-32">
           <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-pink-500"></div>
@@ -160,7 +158,7 @@ function ExchangeRateWidget() {
             </label>
             <select
               id="baseCurrency"
-              value={baseCurrency}
+              value={selectedBaseCurrency}
               onChange={handleBaseCurrencyChange}
               className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
             >
@@ -171,10 +169,10 @@ function ExchangeRateWidget() {
               ))}
             </select>
           </div>
-          
+
           <div className="divide-y divide-gray-200">
             {Object.entries(rates.rates)
-              .filter(([currency]) => currency !== baseCurrency)
+              .filter(([currency]) => currency !== selectedBaseCurrency)
               .map(([currency, rate]) => (
                 <div key={currency} className="py-2 flex justify-between items-center">
                   <div className="flex items-center">
@@ -184,7 +182,7 @@ function ExchangeRateWidget() {
                   <div className="text-right">
                     <div className="font-medium">{formatNumber(rate)}</div>
                     <div className="text-xs text-gray-500">
-                      1 {baseCurrency} = {formatNumber(rate)} {currency}
+                      1 {selectedBaseCurrency} = {formatNumber(rate)} {currency}
                     </div>
                   </div>
                 </div>

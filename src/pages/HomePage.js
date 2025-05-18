@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import TourCard from '../components/TourCard';
 import { toursData } from '../data/toursData';
+import ReviewsSection from '../components/ReviewsSection';
 
 function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -291,18 +292,18 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
   // Данные о направлениях
   const destinations = [
-    { name: 'Tokyo', image: 'https://source.unsplash.com/featured/?tokyo,japan', count: 42 },
-    { name: 'Kyoto', image: 'https://source.unsplash.com/featured/?kyoto,japan', count: 38 },
-    { name: 'Osaka', image: 'https://source.unsplash.com/featured/?osaka,japan', count: 29 },
-    { name: 'Hakone', image: 'https://source.unsplash.com/featured/?hakone,japan', count: 18 }
+    { name: 'Tokyo', image: '/images/destinations/tokyo.png', count: 10 },
+    { name: 'Kyoto', image: '/images/destinations/kyoto.png', count: 6 },
+    { name: 'Osaka', image: '/images/destinations/osaka.png', count: 5 },
+    { name: 'Hakone', image: '/images/destinations/hakone.png', count: 3 }
   ];
 
   // Данные об опыте
   const experiences = [
-    { name: 'Cherry Blossoms', image: 'https://source.unsplash.com/featured/?cherryblossom,japan' },
-    { name: 'Japanese Cuisine', image: 'https://source.unsplash.com/featured/?japanesefood' },
-    { name: 'Temples & Shrines', image: 'https://source.unsplash.com/featured/?japanesetemple' },
-    { name: 'Hot Springs', image: 'https://source.unsplash.com/featured/?onsen,japan' }
+    { name: 'Cherry Blossoms', image: '/images/experiences/cherry-blossom.png' },
+    { name: 'Japanese Cuisine', image: '/images/experiences/japanese-cuisine.png' },
+    { name: 'Temples & Shrines', image: '/images/experiences/temples-shrines.jpg' },
+    { name: 'Hot Springs', image: '/images/experiences/hot-springs.png' }
   ];
 
   // Данные об отзывах
@@ -469,7 +470,10 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {destinations.map((destination, index) => (
               <div key={index} className="relative h-64 rounded-lg overflow-hidden shadow-md cursor-pointer" onClick={() => navigateTo('tours')}>
-                <img src={destination.image} alt={destination.name} className="w-full h-full object-cover transform transition duration-300 hover:scale-110" />
+                <div
+                  className="w-full h-full bg-cover bg-center transform transition duration-300 hover:scale-110"
+                  style={{ backgroundImage: `url(${destination.image})` }}
+                ></div>
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end">
                   <div className="p-4 w-full">
                     <h3 className="text-white text-xl font-bold">{destination.name}</h3>
@@ -490,12 +494,17 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {experiences.map((experience, index) => (
-              <div key={index} className="relative group cursor-pointer" onClick={() => navigateTo('tours')}>
-                <div className="h-40 rounded-lg overflow-hidden">
-                  <img src={experience.image} alt={experience.name} className="w-full h-full object-cover transition duration-300 transform group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg transition duration-300 group-hover:bg-opacity-20"></div>
+              <div key={index} className="relative h-64 rounded-lg overflow-hidden shadow-md cursor-pointer" onClick={() => navigateTo('tours')}>
+                <img
+                  src={experience.image}
+                  alt={experience.name}
+                  className="w-full h-full object-cover transform transition duration-300 hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end">
+                  <div className="p-4 w-full">
+                    <h3 className="text-white text-lg font-medium">{experience.name}</h3>
+                  </div>
                 </div>
-                <h3 className="text-lg font-medium text-center mt-2">{experience.name}</h3>
               </div>
             ))}
           </div>
@@ -505,54 +514,13 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       {/* Testimonials Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800">{t.testimonials.title}</h2>
-            <a
-              href="#"
-              onClick={() => navigateTo('about', 'testimonials')} // Передаем дополнительный параметр
-              className="text-pink-500 hover:text-pink-600 flex items-center"
-            >
-              {t.testimonials.viewAll}
-              <ArrowRight className="ml-1 w-4 h-4" />
-            </a>
-          </div>
-
-          <div className="relative">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                  <img src={testimonials[currentSlide].image} alt={testimonials[currentSlide].name} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{testimonials[currentSlide].name}</h3>
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i < testimonials[currentSlide].rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">"{testimonials[currentSlide].comment}"</p>
-
-              <div className="flex justify-between mt-6">
-                <button
-                  onClick={prevSlide}
-                  className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
-                >
-                  <ChevronDown className="w-5 h-5 transform rotate-90" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
-                >
-                  <ChevronDown className="w-5 h-5 transform -rotate-90" />
-                </button>
-              </div>
-            </div>
-          </div>
+          <ReviewsSection
+            currentLang={currentLang}
+            featured={true}
+            variant="slider"
+            showControls={true}
+            className="max-w-3xl mx-auto"
+          />
         </div>
       </section>
 

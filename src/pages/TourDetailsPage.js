@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { toursData } from '../data/toursData';
 import ExchangeRateWidget from '../components/ExchangeRateWidget';
+import TourCard from '../components/TourCard';
+import ReviewsSection from '../components/ReviewsSection';
 
 // Функция для глубокой локализации многоязычных объектов
 const localizeDeep = (obj, currentLang) => {
@@ -136,7 +138,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readMore: 'Читать далее',
       readLess: 'Свернуть',
       freePlaces: 'свободных мест',
-      aboutTour: 'О туре'
+      aboutTour: 'О туре',
+      currencyConverter: 'Конвертер валют'
     },
     en: {
       backToTours: 'Back to Tours',
@@ -183,7 +186,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readMore: 'Read More',
       readLess: 'Read Less',
       freePlaces: 'free places',
-      aboutTour: 'About Tour'
+      aboutTour: 'About Tour',
+      currencyConverter: 'Currency Converter'
     },
     ja: {
       backToTours: 'ツアー一覧に戻る',
@@ -230,7 +234,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readMore: '続きを読む',
       readLess: '折りたたむ',
       freePlaces: '空き席',
-      aboutTour: 'ツアーについて'
+      aboutTour: 'ツアーについて',
+      currencyConverter: '通貨コンバーター'
     }
   };
 
@@ -536,43 +541,23 @@ return (
               <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.relatedTours}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {relatedTours.map(tour => (
-                  <div key={tour.id} className="bg-white rounded-lg overflow-hidden shadow-md">
-                    <div className="h-40 relative">
-                      <img src={tour.image} alt={tour.title[currentLang]} className="w-full h-full object-cover" />
-                      <div className="absolute top-2 right-2 bg-white py-1 px-2 rounded-full text-pink-500 text-xs font-bold">
-                        {t.from} ${tour.price}
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-bold text-gray-800 mb-1">{tour.title[currentLang]}</h3>
-                      <div className="flex items-center text-gray-600 text-sm mb-2">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span>{tour.duration} {t.days}</span>
-                        <span className="mx-2">•</span>
-                        <Users className="w-4 h-4 mr-1" />
-                        <span>{tour.groupSize} {t.people}</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          // Используем функцию глубокой локализации для всего объекта тура
-                          const localizedTour = localizeDeep(tour, currentLang);
-
-                          // Добавляем информацию о текущем языке
-                          localizedTour.currentLang = currentLang;
-
-                          bookTour(localizedTour);
-                          navigateTo('tour');
-                        }}
-                        className="w-full mt-2 text-pink-500 hover:text-pink-600 border border-pink-500 hover:bg-pink-50 font-medium py-1 px-2 rounded text-sm"
-                      >
-                        {t.viewDetails}
-                      </button>
-                    </div>
-                  </div>
+                  <TourCard
+                    key={tour.id}
+                    tour={tour}
+                    bookTour={bookTour}
+                    viewTourDetails={(localizedTour) => {
+                      // Переход на страницу детального просмотра тура
+                      bookTour(localizedTour);
+                      navigateTo('tour');
+                    }}
+                    translations={translations}
+                    currentLang={currentLang}
+                  />
                 ))}
               </div>
             </section>
           </div>
+
 
           {/* Sidebar */}
           <div className="lg:w-1/3">
@@ -649,8 +634,8 @@ return (
               )}
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Конвертер валют</h3>
-                <ExchangeRateWidget baseCurrency="USD" />
+                <h3 className="text-lg font-bold text-gray-800 mb-4">{t.currencyConverter}</h3>
+                <ExchangeRateWidget baseCurrency="USD" currentLang={currentLang} />
               </div>
 
               <button

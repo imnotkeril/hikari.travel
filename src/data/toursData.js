@@ -491,7 +491,7 @@ export const toursData = [
   {
     id: "rural-japan",
     category: "special",
-    type: "authentic",
+    type: "popular",
     tags: {
       ru: ["популярное", "природа"],
       en: ["popular", "nature"],

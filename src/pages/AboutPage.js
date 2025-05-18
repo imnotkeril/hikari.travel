@@ -1,7 +1,7 @@
 // src/pages/AboutPage.js
 import React, { useState } from 'react';
 import { Menu, X, ChevronRight } from 'lucide-react';
-
+import ReviewsSection from '../components/ReviewsSection';
 
 function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
