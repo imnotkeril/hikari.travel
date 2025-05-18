@@ -1,0 +1,18 @@
+// src/components/index.js
+export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as FAQ } from './FAQ';
+export { default as FavoriteButton } from './FavoriteButton';
+export { default as FeatureTour } from './FeatureTour';
+export { default as Footer } from './Footer';
+export { default as Header } from './Header';
+export { default as HeroBanner } from './HeroBanner';
+export { default as ImageGallery } from './ImageGallery';
+export { default as LanguageSelector } from './LanguageSelector';
+export { default as Loading } from './Loading';
+export { default as ScrollToTop } from './ScrollToTop';
+export { default as ScrollToTopButton } from './ScrollToTopButton';
+export { default as ShareButton } from './ShareButton';
+export { default as StarRating } from './StarRating';
+export { default as TourCard } from './TourCard';
+export { default as TourSummary } from './TourSummary';
+export { default as WhyChooseUs } from './WhyChooseUs';

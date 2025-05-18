@@ -1,0 +1,912 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Check, 
+  Calendar, 
+  Users, 
+  Star, 
+  ChevronDown, 
+  Menu, 
+  X 
+} from 'lucide-react';
+
+function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBooking }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [participants, setParticipants] = useState({ adults: 2, children: 0 });
+  const [contactInfo, setContactInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    specialRequests: ''
+  });
+  const [paymentInfo, setPaymentInfo] = useState({
+    cardNumber: '',
+    cardholderName: '',
+    expiryDate: '',
+    cvv: '',
+    saveCard: false,
+    acceptTerms: false
+  });
+  
+  // Если тур не передан, используем временный тур
+  const defaultTour = {
+    id: 1,
+    title: 'Classic Japan',
+    image: 'https://source.unsplash.com/featured/?tokyo,japan',
+    price: 2500,
+    duration: 7,
+    groupSize: 12,
+    rating: 4.9,
+    reviewCount: 28
+  };
+  
+  const selectedTour = tour || defaultTour;
+  
+  // Переводы
+  const translations = {
+    ru: {
+      menu: {
+        home: 'Главная',
+        tours: 'Туры',
+        about: 'О нас',
+        blog: 'Блог',
+        contact: 'Контакты'
+      },
+      bookingProcess: 'Процесс бронирования',
+      selectDate: 'Выберите дату',
+      participants: 'Участники',
+      contactDetails: 'Контактные данные',
+      payment: 'Оплата',
+      previous: 'Назад',
+      next: 'Далее',
+      tourDetails: 'Детали тура',
+      duration: 'Длительность',
+      days: 'дней',
+      groupSize: 'Размер группы',
+      upTo: 'до',
+      people: 'человек',
+      included: 'Включено',
+      excluded: 'Не включено',
+      bookNow: 'Забронировать сейчас',
+      availableDates: 'Доступные даты',
+      upcomingDepartures: 'Ближайшие отправления',
+      freePlaces: 'свободных мест',
+      pricePerPerson: 'Цена за человека',
+      from: 'от',
+      selectDateButton: 'Выбрать эту дату',
+      participantsInfo: 'Информация об участниках',
+      adults: 'Взрослые',
+      children: 'Дети',
+      childrenAges: 'Возраст детей (0-17)',
+      firstName: 'Имя',
+      lastName: 'Фамилия',
+      email: 'Email',
+      phone: 'Телефон',
+      specialRequests: 'Особые пожелания',
+      additionalInfo: 'Дополнительная информация',
+      paymentDetails: 'Детали оплаты',
+      cardNumber: 'Номер карты',
+      cardholderName: 'Имя владельца',
+      expiryDate: 'Срок действия',
+      cvv: 'CVV',
+      saveCard: 'Сохранить карту для будущих платежей',
+      acceptTerms: 'Я принимаю условия и положения',
+      payNow: 'Оплатить сейчас',
+      bookingSummary: 'Сводка бронирования',
+      tourName: 'Название тура',
+      departureDate: 'Дата отправления',
+      numberOfParticipants: 'Количество участников',
+      totalPrice: 'Общая стоимость',
+      subtotal: 'Подытог',
+      tax: 'Налог',
+      total: 'Всего',
+      accommodation: 'Проживание',
+      transportation: 'Транспорт',
+      guidedTours: 'Экскурсии с гидом',
+      breakfasts: 'Завтраки',
+      entranceFees: 'Входные билеты',
+      flights: 'Авиабилеты',
+      otherMeals: 'Другие приемы пищи',
+      personalExpenses: 'Личные расходы',
+      travelInsurance: 'Страховка',
+      reviewsCount: 'отзывов',
+      back: 'Вернуться',
+      requiredField: 'Обязательное поле',
+      invalidEmail: 'Неверный формат email',
+      invalidPhone: 'Неверный формат телефона',
+      invalidCard: 'Неверный номер карты',
+      invalidDate: 'Неверная дата',
+      invalidCVV: 'Неверный CVV код',
+      termsRequired: 'Необходимо принять условия',
+      backToTours: 'Вернуться к турам',
+      bookingTitle: 'Бронирование тура',
+      youSelected: 'Выбранный тур',
+      modifySelection: 'Изменить выбор',
+      continueToPayment: 'Продолжить к оплате',
+      yourBooking: 'Ваше бронирование',
+      price: 'Цена',
+      footer: {
+        about: 'О Hikari Travel',
+        aboutText: 'Мы специализируемся на организации уникальных туров по Японии с русскоговорящими и англоговорящими гидами.',
+        quickLinks: 'Быстрые ссылки',
+        contact: 'Контакты',
+        subscribe: 'Подпишитесь на новости',
+        subscribeText: 'Получайте эксклюзивные предложения и новости о Японии',
+        emailPlaceholder: 'Ваш email',
+        subscribeButton: 'Подписаться',
+        copyright: 'Все права защищены',
+        terms: 'Условия использования',
+        privacy: 'Политика конфиденциальности'
+      }
+    },
+    en: {
+      menu: {
+        home: 'Home',
+        tours: 'Tours',
+        about: 'About',
+        blog: 'Blog',
+        contact: 'Contact'
+      },
+      bookingProcess: 'Booking Process',
+      selectDate: 'Select Date',
+      participants: 'Participants',
+      contactDetails: 'Contact Details',
+      payment: 'Payment',
+      previous: 'Previous',
+      next: 'Next',
+      tourDetails: 'Tour Details',
+      duration: 'Duration',
+      days: 'days',
+      groupSize: 'Group Size',
+      upTo: 'up to',
+      people: 'people',
+      included: 'Included',
+      excluded: 'Not Included',
+      bookNow: 'Book Now',
+      availableDates: 'Available Dates',
+      upcomingDepartures: 'Upcoming Departures',
+      freePlaces: 'free places',
+      pricePerPerson: 'Price per person',
+      from: 'from',
+      selectDateButton: 'Select This Date',
+      participantsInfo: 'Participants Information',
+      adults: 'Adults',
+      children: 'Children',
+      childrenAges: 'Children Ages (0-17)',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      phone: 'Phone',
+      specialRequests: 'Special Requests',
+      additionalInfo: 'Additional Information',
+      paymentDetails: 'Payment Details',
+      cardNumber: 'Card Number',
+      cardholderName: 'Cardholder Name',
+      expiryDate: 'Expiry Date',
+      cvv: 'CVV',
+      saveCard: 'Save card for future payments',
+      acceptTerms: 'I accept the terms and conditions',
+      payNow: 'Pay Now',
+      bookingSummary: 'Booking Summary',
+      tourName: 'Tour Name',
+      departureDate: 'Departure Date',
+      numberOfParticipants: 'Number of Participants',
+      totalPrice: 'Total Price',
+      subtotal: 'Subtotal',
+      tax: 'Tax',
+      total: 'Total',
+      accommodation: 'Accommodation',
+      transportation: 'Transportation',
+      guidedTours: 'Guided Tours',
+      breakfasts: 'Breakfasts',
+      entranceFees: 'Entrance Fees',
+      flights: 'Flights',
+      otherMeals: 'Other Meals',
+      personalExpenses: 'Personal Expenses',
+      travelInsurance: 'Travel Insurance',
+      reviewsCount: 'reviews',
+      back: 'Go Back',
+      requiredField: 'Required field',
+      invalidEmail: 'Invalid email format',
+      invalidPhone: 'Invalid phone format',
+      invalidCard: 'Invalid card number',
+      invalidDate: 'Invalid date',
+      invalidCVV: 'Invalid CVV code',
+      termsRequired: 'You must accept the terms',
+      backToTours: 'Back to Tours',
+      bookingTitle: 'Tour Booking',
+      youSelected: 'Selected Tour',
+      modifySelection: 'Modify Selection',
+      continueToPayment: 'Continue to Payment',
+      yourBooking: 'Your Booking',
+      price: 'Price',
+      footer: {
+        about: 'About Hikari Travel',
+        aboutText: 'We specialize in organizing unique tours across Japan with Russian and English speaking guides.',
+        quickLinks: 'Quick Links',
+        contact: 'Contact',
+        subscribe: 'Subscribe to Newsletter',
+        subscribeText: 'Get exclusive offers and news about Japan',
+        emailPlaceholder: 'Your email',
+        subscribeButton: 'Subscribe',
+        copyright: 'All Rights Reserved',
+        terms: 'Terms of Service',
+        privacy: 'Privacy Policy'
+      }
+    },
+    ja: {
+      menu: {
+        home: 'ホーム',
+        tours: 'ツアー',
+        about: '会社概要',
+        blog: 'ブログ',
+        contact: 'お問い合わせ'
+      },
+      bookingProcess: '予約プロセス',
+      selectDate: '日付を選択',
+      participants: '参加者',
+      contactDetails: '連絡先',
+      payment: '支払い',
+      previous: '戻る',
+      next: '次へ',
+      tourDetails: 'ツアー詳細',
+      duration: '期間',
+      days: '日間',
+      groupSize: 'グループサイズ',
+      upTo: '最大',
+      people: '人',
+      included: '含まれるもの',
+      excluded: '含まれないもの',
+      bookNow: '今すぐ予約',
+      availableDates: '利用可能な日程',
+      upcomingDepartures: '今後の出発日',
+      freePlaces: '空き席',
+      pricePerPerson: '一人あたりの料金',
+      from: 'から',
+      selectDateButton: 'この日程を選択',
+      participantsInfo: '参加者情報',
+      adults: '大人',
+      children: '子供',
+      childrenAges: '子供の年齢（0-17歳）',
+      firstName: '名',
+      lastName: '姓',
+      email: 'メールアドレス',
+      phone: '電話番号',
+      specialRequests: '特別なリクエスト',
+      additionalInfo: '追加情報',
+      paymentDetails: 'お支払い詳細',
+      cardNumber: 'カード番号',
+      cardholderName: 'カード名義人',
+      expiryDate: '有効期限',
+      cvv: 'セキュリティコード',
+      saveCard: '今後の支払いのためにカードを保存する',
+      acceptTerms: '利用規約に同意します',
+      payNow: '今すぐ支払う',
+      bookingSummary: '予約概要',
+      tourName: 'ツアー名',
+      departureDate: '出発日',
+      numberOfParticipants: '参加者数',
+      totalPrice: '合計金額',
+      subtotal: '小計',
+      tax: '税金',
+      total: '合計',
+      accommodation: '宿泊施設',
+      transportation: '交通機関',
+      guidedTours: 'ガイド付きツアー',
+      breakfasts: '朝食',
+      entranceFees: '入場料',
+      flights: '航空券',
+      otherMeals: 'その他の食事',
+      personalExpenses: '個人的な支出',
+      travelInsurance: '旅行保険',
+      reviewsCount: 'レビュー',
+      back: '戻る',
+      requiredField: '必須フィールド',
+      invalidEmail: '無効なメールフォーマット',
+      invalidPhone: '無効な電話番号フォーマット',
+      invalidCard: '無効なカード番号',
+      invalidDate: '無効な日付',
+      invalidCVV: '無効なCVVコード',
+      termsRequired: '利用規約に同意する必要があります',
+      backToTours: 'ツアー一覧に戻る',
+      bookingTitle: 'ツアー予約',
+      youSelected: '選択したツアー',
+      modifySelection: '選択を変更',
+      continueToPayment: '支払いに進む',
+      yourBooking: 'ご予約',
+      price: '価格',
+      footer: {
+        about: 'ひかりトラベルについて',
+        aboutText: '私たちはロシア語と英語を話すガイドによる日本全国のユニークなツアーを専門としています。',
+        quickLinks: 'クイックリンク',
+        contact: 'お問い合わせ',
+        subscribe: 'ニュースレターを購読',
+        subscribeText: '日本に関する限定オファーとニュースを入手',
+        emailPlaceholder: 'メールアドレス',
+        subscribeButton: '購読',
+        copyright: '全著作権所有',
+        terms: '利用規約',
+        privacy: 'プライバシーポリシー'
+      }
+    }
+  };
+
+  const t = translations[currentLang];
+  
+  // Примерные доступные даты
+  const dates = [
+    { id: 1, date: '2025-05-15', availablePlaces: 8, price: selectedTour.price },
+    { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round(selectedTour.price * 1.08) },
+    { id: 3, date: '2025-06-05', availablePlaces: 10, price: Math.round(selectedTour.price * 0.92) },
+    { id: 4, date: '2025-06-12', availablePlaces: 2, price: Math.round(selectedTour.price * 1.12) },
+    { id: 5, date: '2025-06-19', availablePlaces: 7, price: selectedTour.price },
+  ];
+  
+  // Примерные включенные и исключенные пункты
+  const included = ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'];
+  const excluded = ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'];
+  
+  // Обработчики
+  const handleNextStep = () => {
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
+    } else {
+      // Если последний шаг, отправляем данные бронирования
+      const bookingData = {
+        tour: selectedTour,
+        date: selectedDate,
+        participants,
+        contactInfo,
+        paymentInfo,
+        totalPrice: calculateTotal(),
+        bookingId: `HT-${Date.now().toString().substr(-8)}`
+      };
+      saveBooking(bookingData);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
+    } else {
+      navigateTo('tours');
+    }
+  };
+  
+  // Валидация данных
+  const validateContactInfo = () => {
+    const errors = {};
+    if (!contactInfo.firstName) errors.firstName = t.requiredField;
+    if (!contactInfo.lastName) errors.lastName = t.requiredField;
+    if (!contactInfo.email) errors.email = t.requiredField;
+    else if (!/\S+@\S+\.\S+/.test(contactInfo.email)) errors.email = t.invalidEmail;
+    if (!contactInfo.phone) errors.phone = t.requiredField;
+    return errors;
+  };
+  
+  const validatePaymentInfo = () => {
+    const errors = {};
+    if (!paymentInfo.cardNumber) errors.cardNumber = t.requiredField;
+    else if (!/^\d{16}$/.test(paymentInfo.cardNumber.replace(/\s/g, ''))) errors.cardNumber = t.invalidCard;
+    if (!paymentInfo.cardholderName) errors.cardholderName = t.requiredField;
+    if (!paymentInfo.expiryDate) errors.expiryDate = t.requiredField;
+    else if (!/^\d{2}\/\d{2}$/.test(paymentInfo.expiryDate)) errors.expiryDate = t.invalidDate;
+    if (!paymentInfo.cvv) errors.cvv = t.requiredField;
+    else if (!/^\d{3,4}$/.test(paymentInfo.cvv)) errors.cvv = t.invalidCVV;
+    if (!paymentInfo.acceptTerms) errors.acceptTerms = t.termsRequired;
+    return errors;
+  };
+  
+  // Функция для проверки, можно ли перейти на следующий шаг
+  const canProceed = () => {
+    if (currentStep === 1 && !selectedDate) return false;
+    if (currentStep === 3) {
+      const errors = validateContactInfo();
+      return Object.keys(errors).length === 0;
+    }
+    if (currentStep === 4) {
+      const errors = validatePaymentInfo();
+      return Object.keys(errors).length === 0;
+    }
+    return true;
+  };
+  
+  // Расчет общей стоимости
+  const calculateTotal = () => {
+    if (!selectedDate) return { subtotal: 0, tax: 0, total: 0 };
+    const basePrice = selectedDate.price * (participants.adults + (participants.children * 0.7));
+    const tax = Math.round(basePrice * 0.1);
+    return {
+      subtotal: basePrice,
+      tax,
+      total: basePrice + tax
+    };
+  };
+  
+  // Форматирование даты
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(
+      currentLang === 'ru' ? 'ru-RU' : 
+      currentLang === 'ja' ? 'ja-JP' : 
+      'en-US', 
+      { day: 'numeric', month: 'long', year: 'numeric' }
+    );
+  };
+  
+  // Обработчики изменения полей
+  const handleContactInfoChange = (e) => {
+    const { name, value } = e.target;
+    setContactInfo(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handlePaymentInfoChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+    setPaymentInfo(prev => ({ ...prev, [name]: newValue }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Bread Crumbs */}
+        <div className="flex items-center mb-6 text-sm">
+          <a href="#" onClick={() => navigateTo('home')} className="text-gray-500 hover:text-pink-500">{t.menu.home}</a>
+          <span className="mx-2 text-gray-400">/</span>
+          <a href="#" onClick={() => navigateTo('tours')} className="text-gray-500 hover:text-pink-500">{t.menu.tours}</a>
+          <span className="mx-2 text-gray-400">/</span>
+          <span className="text-gray-700">{t.bookingTitle}</span>
+        </div>
+        
+        {/* Booking Process Steps */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">{t.bookingProcess}</h1>
+          <div className="flex flex-wrap justify-between items-center">
+            <div className={`flex-1 text-center ${currentStep >= 1 ? 'text-pink-500' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full ${currentStep >= 1 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>1</div>
+              <div>{t.selectDate}</div>
+            </div>
+            <div className="w-full sm:w-auto">
+              <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
+            </div>
+            <div className={`flex-1 text-center ${currentStep >= 2 ? 'text-pink-500' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full ${currentStep >= 2 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>2</div>
+              <div>{t.participants}</div>
+            </div>
+            <div className="w-full sm:w-auto">
+              <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
+            </div>
+            <div className={`flex-1 text-center ${currentStep >= 3 ? 'text-pink-500' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full ${currentStep >= 3 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>3</div>
+              <div>{t.contactDetails}</div>
+            </div>
+            <div className="w-full sm:w-auto">
+              <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
+            </div>
+            <div className={`flex-1 text-center ${currentStep >= 4 ? 'text-pink-500' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full ${currentStep >= 4 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>4</div>
+              <div>{t.payment}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              {/* Step 1: Select Date */}
+              {currentStep === 1 && (
+                <>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.availableDates}</h2>
+                  <div className="mb-6">
+                    <h3 className="font-bold text-gray-700 mb-2">{t.upcomingDepartures}</h3>
+                    <div className="space-y-4">
+                      {dates.map((date) => (
+                        <div 
+                          key={date.id} 
+                          className={`border ${selectedDate && selectedDate.id === date.id ? 'border-pink-500' : 'border-gray-200'} rounded-lg p-4 hover:border-pink-500 transition duration-300 cursor-pointer`}
+                          onClick={() => setSelectedDate(date)}
+                        >
+                          <div className="flex flex-wrap justify-between items-center">
+                            <div className="mr-4">
+                              <div className="font-bold text-gray-800">{formatDate(date.date)}</div>
+                              <div className="text-green-600">{date.availablePlaces} {t.freePlaces}</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-gray-600">{t.pricePerPerson}</div>
+                              <div className="font-bold text-pink-500 text-xl">${date.price}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Step 2: Participants */}
+              {currentStep === 2 && (
+                <>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.participantsInfo}</h2>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.adults}</label>
+                      <div className="flex">
+                        <button 
+                          className="bg-gray-200 rounded-l px-4 py-2"
+                          onClick={() => setParticipants({...participants, adults: Math.max(1, participants.adults - 1)})}
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="number" 
+                          value={participants.adults}
+                          onChange={(e) => setParticipants({...participants, adults: Math.max(1, parseInt(e.target.value) || 0)})}
+                          className="w-full border-y border-gray-300 text-center py-2"
+                          min="1"
+                        />
+                        <button 
+                          className="bg-gray-200 rounded-r px-4 py-2"
+                          onClick={() => setParticipants({...participants, adults: participants.adults + 1})}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.children}</label>
+                      <div className="flex">
+                        <button 
+                          className="bg-gray-200 rounded-l px-4 py-2"
+                          onClick={() => setParticipants({...participants, children: Math.max(0, participants.children - 1)})}
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="number" 
+                          value={participants.children}
+                          onChange={(e) => setParticipants({...participants, children: Math.max(0, parseInt(e.target.value) || 0)})}
+                          className="w-full border-y border-gray-300 text-center py-2"
+                          min="0"
+                        />
+                        <button 
+                          className="bg-gray-200 rounded-r px-4 py-2"
+                          onClick={() => setParticipants({...participants, children: participants.children + 1})}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {participants.children > 0 && (
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">{t.childrenAges}</label>
+                        <div className="text-sm text-gray-500 mb-2">This information helps us prepare appropriate activities and accommodations for children.</div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                          {[...Array(participants.children)].map((_, index) => (
+                            <div key={index}>
+                              <label className="block text-gray-600 text-sm mb-1">Child {index + 1}</label>
+                              <select className="w-full border border-gray-300 rounded-md px-3 py-2">
+                                {[...Array(18)].map((_, age) => (
+                                  <option key={age} value={age}>{age} years</option>
+                                ))}
+                              </select>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              
+              {/* Step 3: Contact Information */}
+              {currentStep === 3 && (
+                <>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.contactDetails}</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.firstName} *</label>
+                      <input 
+                        type="text" 
+                        name="firstName"
+                        value={contactInfo.firstName}
+                        onChange={handleContactInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validateContactInfo().firstName && (
+                        <p className="text-red-500 text-sm mt-1">{validateContactInfo().firstName}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.lastName} *</label>
+                      <input 
+                        type="text" 
+                        name="lastName"
+                        value={contactInfo.lastName}
+                        onChange={handleContactInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validateContactInfo().lastName && (
+                        <p className="text-red-500 text-sm mt-1">{validateContactInfo().lastName}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.email} *</label>
+                      <input 
+                        type="email" 
+                        name="email"
+                        value={contactInfo.email}
+                        onChange={handleContactInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validateContactInfo().email && (
+                        <p className="text-red-500 text-sm mt-1">{validateContactInfo().email}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.phone} *</label>
+                      <input 
+                        type="tel" 
+                        name="phone"
+                        value={contactInfo.phone}
+                        onChange={handleContactInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validateContactInfo().phone && (
+                        <p className="text-red-500 text-sm mt-1">{validateContactInfo().phone}</p>
+                      )}
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <label className="block text-gray-700 font-medium mb-2">{t.specialRequests}</label>
+                      <textarea 
+                        name="specialRequests"
+                        value={contactInfo.specialRequests}
+                        onChange={handleContactInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        rows="4"
+                      ></textarea>
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Step 4: Payment */}
+              {currentStep === 4 && (
+                <>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.paymentDetails}</h2>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.cardNumber} *</label>
+                      <input 
+                        type="text" 
+                        name="cardNumber"
+                        value={paymentInfo.cardNumber}
+                        onChange={handlePaymentInfoChange}
+                        placeholder="1234 5678 9012 3456"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validatePaymentInfo().cardNumber && (
+                        <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().cardNumber}</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2">{t.cardholderName} *</label>
+                      <input 
+                        type="text" 
+                        name="cardholderName"
+                        value={paymentInfo.cardholderName}
+                        onChange={handlePaymentInfoChange}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                      {validatePaymentInfo().cardholderName && (
+                        <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().cardholderName}</p>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">{t.expiryDate} *</label>
+                        <input 
+                          type="text" 
+                          name="expiryDate"
+                          value={paymentInfo.expiryDate}
+                          onChange={handlePaymentInfoChange}
+                          placeholder="MM/YY"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          required
+                        />
+                        {validatePaymentInfo().expiryDate && (
+                          <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().expiryDate}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">{t.cvv} *</label>
+                        <input 
+                          type="text" 
+                          name="cvv"
+                          value={paymentInfo.cvv}
+                          onChange={handlePaymentInfoChange}
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          required
+                        />
+                        {validatePaymentInfo().cvv && (
+                          <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().cvv}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="flex items-center">
+                        <input 
+                          type="checkbox"
+                          name="saveCard"
+                          checked={paymentInfo.saveCard}
+                          onChange={handlePaymentInfoChange}
+                          className="rounded border-gray-300 text-pink-500 focus:ring-pink-500 mr-2"
+                        />
+                        <span className="text-gray-700">{t.saveCard}</span>
+                      </label>
+                    </div>
+                    
+                    <div>
+                      <label className="flex items-center">
+                        <input 
+                          type="checkbox"
+                          name="acceptTerms"
+                          checked={paymentInfo.acceptTerms}
+                          onChange={handlePaymentInfoChange}
+                          className="rounded border-gray-300 text-pink-500 focus:ring-pink-500 mr-2"
+                          required
+                        />
+                        <span className="text-gray-700">{t.acceptTerms}</span>
+                      </label>
+                      {validatePaymentInfo().acceptTerms && (
+                        <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().acceptTerms}</p>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              <div className="flex justify-between mt-8">
+                <button 
+                  onClick={handlePreviousStep} 
+                  className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {t.previous}
+                </button>
+                <button 
+                  onClick={handleNextStep} 
+                  className={`flex items-center px-6 py-2 rounded-md bg-pink-500 hover:bg-pink-600 text-white ${!canProceed() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={!canProceed()}
+                >
+                  {currentStep === 4 ? t.payNow : t.next}
+                  {currentStep < 4 && <ArrowRight className="w-4 h-4 ml-2" />}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Sidebar - Tour Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">{t.yourBooking}</h2>
+              
+              <div className="mb-4">
+                <img src={selectedTour.image} alt={selectedTour.title} className="w-full h-40 object-cover rounded-lg mb-4" />
+                <h3 className="text-lg font-bold mb-2">{selectedTour.title}</h3>
+                <div className="flex items-center mb-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-4 h-4 ${i < Math.floor(selectedTour.rating) ? 'text-yellow-500' : 'text-gray-300'}`} 
+                      />
+                    ))}
+                  </div>
+                  <span className="ml-1 text-gray-600">{selectedTour.rating}</span>
+                  <span className="mx-1 text-gray-400">·</span>
+                  <span className="text-gray-600">{selectedTour.reviewCount} {t.reviewsCount}</span>
+                </div>
+                
+                <div className="flex justify-between mb-1">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <span>{selectedTour.duration} {t.days}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="w-4 h-4 mr-1" />
+                    <span>{t.upTo} {selectedTour.groupSize}</span>
+                  </div>
+                </div>
+                
+                {selectedDate && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="font-medium text-gray-700">{t.departureDate}</p>
+                    <p className="text-gray-900">{formatDate(selectedDate.date)}</p>
+                  </div>
+                )}
+                
+                {participants && (currentStep > 1) && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                    <p className="font-medium text-gray-700">{t.participants}</p>
+                    <p className="text-gray-900">{participants.adults} {t.adults}, {participants.children} {t.children}</p>
+                  </div>
+                )}
+              </div>
+              
+              {/* Pricing breakdown */}
+              {selectedDate && (
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <h3 className="font-bold text-gray-800 mb-2">{t.bookingSummary}</h3>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t.subtotal}</span>
+                      <span className="font-medium">${calculateTotal().subtotal}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t.tax} (10%)</span>
+                      <span className="font-medium">${calculateTotal().tax}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between border-t border-gray-200 pt-2 font-bold">
+                    <span>{t.total}</span>
+                    <span className="text-pink-600">${calculateTotal().total}</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className="mt-6">
+                <h3 className="font-bold text-gray-800 mb-2">{t.included}</h3>
+                <ul className="space-y-1 mb-4">
+                  {included.map((item, index) => (
+                    <li key={index} className="flex items-center text-gray-600">
+                      <Check className="w-4 h-4 text-green-500 mr-2" />
+                      <span>{t[item]}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <h3 className="font-bold text-gray-800 mb-2">{t.excluded}</h3>
+                <ul className="space-y-1">
+                  {excluded.map((item, index) => (
+                    <li key={index} className="flex items-center text-gray-600">
+                      <span className="text-red-500 mr-2">✗</span>
+                      <span>{t[item]}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default BookingPage;
