@@ -16,6 +16,7 @@ const ReviewsSection = ({
   showMoreButton = false, // Показывать кнопку "Показать еще"
   onShowMoreClick = null, // Функция обработки клика по кнопке "Показать еще"
   skipFirst = 0, // Пропустить первые N отзывов (полезно для пагинации)
+  navigateTo = null, // Функция для навигации к странице "О нас"
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showAll, setShowAll] = useState(false);
@@ -29,7 +30,14 @@ const ReviewsSection = ({
       hideMore: 'Скрыть',
       writeReview: 'Написать отзыв',
       noReviews: 'Отзывов пока нет',
-      beFirst: 'Будьте первым, кто оставит отзыв'
+      beFirst: 'Будьте первым, кто оставит отзыв',
+      readMore: 'Читать далее',
+      readLess: 'Скрыть',
+      tourReview: 'Отзыв о туре',
+      allReviews: 'Все отзывы',
+      from: 'из',
+      date: 'Дата',
+      location: 'Местоположение'
     },
     en: {
       title: 'Reviews',
@@ -38,7 +46,14 @@ const ReviewsSection = ({
       hideMore: 'Hide',
       writeReview: 'Write a Review',
       noReviews: 'No reviews yet',
-      beFirst: 'Be the first to leave a review'
+      beFirst: 'Be the first to leave a review',
+      readMore: 'Read More',
+      readLess: 'Hide',
+      tourReview: 'Tour Review',
+      allReviews: 'All Reviews',
+      from: 'from',
+      date: 'Date',
+      location: 'Location'
     },
     ja: {
       title: 'お客様の声',
@@ -47,7 +62,14 @@ const ReviewsSection = ({
       hideMore: '隠す',
       writeReview: 'レビューを書く',
       noReviews: 'まだレビューはありません',
-      beFirst: '最初のレビューを書いてください'
+      beFirst: '最初のレビューを書いてください',
+      readMore: '続きを読む',
+      readLess: '折りたたむ',
+      tourReview: 'ツアーレビュー',
+      allReviews: 'すべてのレビュー',
+      from: 'から',
+      date: '日付',
+      location: '場所'
     }
   };
 
@@ -78,6 +100,13 @@ const ReviewsSection = ({
       onShowMoreClick();
     } else {
       setShowAll(!showAll);
+    }
+  };
+
+  // Обработчик для просмотра всех отзывов на странице "О нас"
+  const handleViewAllReviews = () => {
+    if (navigateTo) {
+      navigateTo('about', 'testimonials');
     }
   };
 
@@ -115,6 +144,14 @@ const ReviewsSection = ({
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">{t.title}</h2>
             <div className="flex space-x-2">
+              {navigateTo && (
+                <button
+                  onClick={handleViewAllReviews}
+                  className="text-pink-500 hover:text-pink-600 flex items-center mr-4"
+                >
+                  {t.viewAll}
+                </button>
+              )}
               <button
                 onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayedReviews.length - 1 : prev - 1))}
                 className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
@@ -155,6 +192,10 @@ const ReviewsSection = ({
                 </div>
               )}
               <p className="text-gray-500 text-sm">{displayedReviews[currentSlide].author.location[currentLang]}</p>
+
+              {displayedReviews[currentSlide].tourId && (
+                <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {displayedReviews[currentSlide].tourId}</p>
+              )}
             </div>
           </div>
           <p className="text-gray-700">"{displayedReviews[currentSlide].text[currentLang]}"</p>
@@ -198,9 +239,14 @@ const ReviewsSection = ({
         {showControls && (
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">{t.title}</h2>
-            <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
-              {t.writeReview}
-            </button>
+            {navigateTo && (
+              <button
+                onClick={handleViewAllReviews}
+                className="text-pink-500 hover:text-pink-600 flex items-center"
+              >
+                {t.viewAll}
+              </button>
+            )}
           </div>
         )}
 
@@ -226,6 +272,9 @@ const ReviewsSection = ({
                       ))}
                     </div>
                   )}
+                  {review.tourId && (
+                    <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {review.tourId}</p>
+                  )}
                 </div>
               </div>
               <p className="text-gray-700 italic">"{review.text[currentLang]}"</p>
@@ -249,15 +298,25 @@ const ReviewsSection = ({
     );
   }
 
-  // Отображение в виде списка
+  // Отображение в виде списка (по умолчанию)
   return (
     <div className={`${className}`}>
       {showControls && (
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">{t.title}</h2>
-          <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
-            {t.writeReview}
-          </button>
+          <div className="flex items-center">
+            {navigateTo && (
+              <button
+                onClick={handleViewAllReviews}
+                className="text-pink-500 hover:text-pink-600 flex items-center"
+              >
+                {t.viewAll}
+              </button>
+            )}
+            <button className="ml-4 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
+              {t.writeReview}
+            </button>
+          </div>
         </div>
       )}
 
@@ -286,6 +345,9 @@ const ReviewsSection = ({
                   </div>
                 )}
                 <p className="text-gray-500 text-sm">{review.author.location[currentLang]}</p>
+                {review.tourId && (
+                  <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {review.tourId}</p>
+                )}
               </div>
             </div>
             <p className="text-gray-700">"{review.text[currentLang]}"</p>

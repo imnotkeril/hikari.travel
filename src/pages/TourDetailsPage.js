@@ -478,62 +478,14 @@ return (
                 </button>
               </div>
 
-              <div className="space-y-6">
-                {/* Примерные отзывы */}
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                  <div className="flex items-center mb-4">
-                    <img
-                      src="https://source.unsplash.com/featured/?person,woman"
-                      alt="Anna Smith"
-                      className="w-12 h-12 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <div className="flex items-center">
-                        <h3 className="text-lg font-bold text-gray-800 mr-2">Anna Smith</h3>
-                        <span className="text-gray-500 text-sm">05.03.2025</span>
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < 5 ? 'text-yellow-500' : 'text-gray-300'}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-700">
-                    Превосходный тур! Наш гид был очень знающим и дружелюбным. Маршрут идеально сбалансирован - достаточно времени на основные достопримечательности и при этом есть свободное время для исследования. Рекомендую!
-                  </p>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                  <div className="flex items-center mb-4">
-                    <img
-                      src="https://source.unsplash.com/featured/?person,man"
-                      alt="James Wilson"
-                      className="w-12 h-12 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <div className="flex items-center">
-                        <h3 className="text-lg font-bold text-gray-800 mr-2">James Wilson</h3>
-                        <span className="text-gray-500 text-sm">28.02.2025</span>
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < 4 ? 'text-yellow-500' : 'text-gray-300'}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-gray-700">
-                    Отличный опыт! Особенно понравилось размещение и то, как были организованы переезды между городами. Дал 4 звезды, так как в некоторых местах хотелось бы провести больше времени.
-                  </p>
-                </div>
-              </div>
+              <ReviewsSection
+                currentLang={currentLang}
+                tourId={selectedTour.id}
+                variant="list"
+                showControls={false}
+                limit={3}
+                showMoreButton={true}
+              />
             </section>
 
             {/* Related Tours */}

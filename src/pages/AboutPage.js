@@ -560,112 +560,14 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.testimonials.title}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <img
-                  src="https://source.unsplash.com/featured/?woman,portrait"
-                  alt={t.testimonials.testimonial1.name}
-                  className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial1.name}</h3>
-                  <p className="text-gray-500">{t.testimonials.testimonial1.location}</p>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">"{t.testimonials.testimonial1.text}"</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <img
-                  src="https://source.unsplash.com/featured/?man,portrait"
-                  alt={t.testimonials.testimonial2.name}
-                  className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial2.name}</h3>
-                  <p className="text-gray-500">{t.testimonials.testimonial2.location}</p>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">"{t.testimonials.testimonial2.text}"</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <img
-                  src="https://source.unsplash.com/featured/?woman,portrait,2"
-                  alt={t.testimonials.testimonial3.name}
-                  className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial3.name}</h3>
-                  <p className="text-gray-500">{t.testimonials.testimonial3.location}</p>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">"{t.testimonials.testimonial3.text}"</p>
-            </div>
-          </div>
-
-          {/* Дополнительные отзывы, которые показываются при нажатии кнопки "Показать больше" */}
-          {showMoreTestimonials && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 animate-fadeIn">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <img
-                    src="https://source.unsplash.com/featured/?man,portrait,2"
-                    alt={t.testimonials.testimonial4.name}
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial4.name}</h3>
-                    <p className="text-gray-500">{t.testimonials.testimonial4.location}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">"{t.testimonials.testimonial4.text}"</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <img
-                    src="https://source.unsplash.com/featured/?woman,portrait,3"
-                    alt={t.testimonials.testimonial5.name}
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial5.name}</h3>
-                    <p className="text-gray-500">{t.testimonials.testimonial5.location}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">"{t.testimonials.testimonial5.text}"</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <img
-                    src="https://source.unsplash.com/featured/?man,portrait,3"
-                    alt={t.testimonials.testimonial6.name}
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800">{t.testimonials.testimonial6.name}</h3>
-                    <p className="text-gray-500">{t.testimonials.testimonial6.location}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600 italic">"{t.testimonials.testimonial6.text}"</p>
-              </div>
-            </div>
-          )}
-
-          {/* Кнопка "Показать больше"/"Скрыть" */}
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={() => setShowMoreTestimonials(!showMoreTestimonials)}
-              className="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white font-medium rounded-md"
-            >
-              {showMoreTestimonials ? t.testimonials.hideMore : t.testimonials.showMore}
-            </button>
-          </div>
+          <ReviewsSection
+            currentLang={currentLang}
+            variant="grid"
+            showControls={true}
+            limit={6}
+            showMoreButton={true}
+            className="mb-8"
+          />
         </div>
       </section>
       

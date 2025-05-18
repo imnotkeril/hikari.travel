@@ -520,6 +520,7 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
             variant="slider"
             showControls={true}
             className="max-w-3xl mx-auto"
+            navigateTo={navigateTo}
           />
         </div>
       </section>
