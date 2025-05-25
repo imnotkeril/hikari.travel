@@ -6,6 +6,7 @@ import { Header, Footer } from '../components';
 import {
   HomePage,
   ToursPage,
+  ServicesPage,
   AboutPage,
   ContactPage,
   LoginPage,
@@ -25,6 +26,8 @@ function MainComponent() {
     setCurrentLang,
     selectedTour,
     setSelectedTour,
+    selectedService,
+    setSelectedService,
     bookingData,
     isLoggedIn,
     userData,
@@ -47,6 +50,12 @@ function MainComponent() {
   // Функция для бронирования тура
   const bookTour = (tour) => {
     setSelectedTour(tour);
+    navigateTo("booking");
+  };
+
+  // Функция для бронирования услуги
+  const bookService = (serviceData) => {
+    setSelectedService(serviceData);
     navigateTo("booking");
   };
 
@@ -77,6 +86,14 @@ function MainComponent() {
             bookTour={bookTour}
           />
         } />
+        <Route path="/services" element={
+          <ServicesPage
+            currentLang={currentLang}
+            setCurrentLang={setCurrentLang}
+            navigateTo={navigateTo}
+            bookService={bookService}
+          />
+        } />
         <Route path="/tour/:tourId?" element={
           <TourDetailsPage
             currentLang={currentLang}
@@ -91,6 +108,7 @@ function MainComponent() {
             setCurrentLang={setCurrentLang}
             navigateTo={navigateTo}
             tour={selectedTour}
+            service={selectedService}
             saveBooking={saveBooking}
           />
         } />

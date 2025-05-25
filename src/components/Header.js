@@ -12,6 +12,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
       menu: {
         home: 'Главная',
         tours: 'Туры',
+        services: 'Услуги',
         about: 'О нас',
         blog: 'Блог',
         contact: 'Контакты'
@@ -22,6 +23,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
       menu: {
         home: 'Home',
         tours: 'Tours',
+        services: 'Services',
         about: 'About',
         blog: 'Blog',
         contact: 'Contact'
@@ -32,6 +34,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
       menu: {
         home: 'ホーム',
         tours: 'ツアー',
+        services: 'サービス',
         about: '会社概要',
         blog: 'ブログ',
         contact: 'お問い合わせ'
@@ -65,9 +68,10 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
         </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-10">
+          <nav className="hidden md:flex space-x-8">
             <a href="#" onClick={(e) => handleNavigation('home', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.home}</a>
             <a href="#" onClick={(e) => handleNavigation('tours', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.tours}</a>
+            <a href="#" onClick={(e) => handleNavigation('services', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.services}</a>
             <a href="#" onClick={(e) => handleNavigation('about', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.about}</a>
             <a href="#" onClick={(e) => handleNavigation('blog', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.blog}</a>
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.contact}</a>
@@ -109,6 +113,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
           <div className="md:hidden py-4 border-t border-gray-200">
             <a href="#" onClick={(e) => handleNavigation('home', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.home}</a>
             <a href="#" onClick={(e) => handleNavigation('tours', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.tours}</a>
+            <a href="#" onClick={(e) => handleNavigation('services', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.services}</a>
             <a href="#" onClick={(e) => handleNavigation('about', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.about}</a>
             <a href="#" onClick={(e) => handleNavigation('blog', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.blog}</a>
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.contact}</a>

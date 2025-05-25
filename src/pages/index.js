@@ -10,3 +10,4 @@ export { default as BookingPage } from './BookingPage';
 export { default as BookingConfirmationPage } from './BookingConfirmationPage';
 export { default as BlogPage } from './BlogPage';
 export { default as BlogPostPage } from './BlogPostPage';
+export { default as ServicesPage } from './ServicesPage';

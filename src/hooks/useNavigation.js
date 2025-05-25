@@ -24,6 +24,9 @@ export const useNavigation = () => {
       case 'tours':
         path = '/tours';
         break;
+      case 'services':
+        path = '/services';
+        break;
       case 'tour':
         path = `/tour`; // ID тура должен передаваться отдельно
         break;

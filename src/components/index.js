@@ -16,3 +16,5 @@ export { default as StarRating } from './StarRating';
 export { default as TourCard } from './TourCard';
 export { default as TourSummary } from './TourSummary';
 export { default as WhyChooseUs } from './WhyChooseUs';
+export { default as ServiceCard } from './ServiceCard';
+export { default as ReviewsSection } from './ReviewsSection';

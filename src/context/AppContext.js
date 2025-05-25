@@ -11,6 +11,7 @@ export const AppProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
   const [selectedTour, setSelectedTour] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
   const [bookingData, setBookingData] = useState(null);
 
   // Переключение между страницами
@@ -22,6 +23,14 @@ export const AppProvider = ({ children }) => {
   // Функция для бронирования тура
   const bookTour = (tour) => {
     setSelectedTour(tour);
+    setSelectedService(null); // Очищаем выбранную услугу
+    navigateTo("booking");
+  };
+
+  // Функция для бронирования услуги
+  const bookService = (serviceData) => {
+    setSelectedService(serviceData);
+    setSelectedTour(null); // Очищаем выбранный тур
     navigateTo("booking");
   };
 
@@ -63,10 +72,13 @@ export const AppProvider = ({ children }) => {
     setUserData,
     selectedTour,
     setSelectedTour,
+    selectedService,
+    setSelectedService,
     bookingData,
     setBookingData,
     navigateTo,
     bookTour,
+    bookService,
     handleLogin,
     handleLogout,
     saveBooking
