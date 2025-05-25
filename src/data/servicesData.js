@@ -15,14 +15,14 @@ export const servicesData = [
       ja: "都市間・空港間のトランスファー/タクシー"
     },
     shortDescription: {
-      ru: "Комфортабельные трансферы с русскоговорящими водителями по всей Японии",
-      en: "Comfortable transfers with Russian-speaking drivers throughout Japan",
-      ja: "日本全国でロシア語対応ドライバーによる快適な送迎サービス"
+      ru: "Комфортабельные трансферы с водителями по всей Японии",
+      en: "Comfortable transfers with rivers throughout Japan",
+      ja: "日本全国でドライバーによる快適な送迎サービス"
     },
     description: {
-      ru: "Комфортабельные трансферы с русскоговорящими водителями по всей Японии. Встреча с табличкой в аэропорту, помощь с багажом, Wi-Fi в автомобиле.",
-      en: "Comfortable transfers with Russian-speaking drivers throughout Japan. Airport pickup with nameplate, luggage assistance, Wi-Fi in the vehicle.",
-      ja: "日本全国でロシア語対応ドライバーによる快適な送迎サービス。空港でのネームプレートお出迎え、荷物サポート、車内Wi-Fi完備。"
+      ru: "Комфортабельные трансферы с водителями по всей Японии. Встреча с табличкой в аэропорту, помощь с багажом, Wi-Fi в автомобиле.",
+      en: "Comfortable transfers with drivers throughout Japan. Airport pickup with nameplate, luggage assistance, Wi-Fi in the vehicle.",
+      ja: "日本全国でドライバーによる快適な送迎サービス。空港でのネームプレートお出迎え、荷物サポート、車内Wi-Fi完備。"
     },
     image: "https://source.unsplash.com/featured/?japan,car,transfer",
     price: 15000,
@@ -33,21 +33,21 @@ export const servicesData = [
       ru: [
         "Встреча с табличкой в аэропорту",
         "Помощь с багажом",
-        "Русскоговорящий водитель",
+        "Водитель",
         "Детские кресла (по запросу)",
         "Wi-Fi в автомобиле"
       ],
       en: [
         "Airport pickup with nameplate",
         "Luggage assistance",
-        "Russian-speaking driver",
+        "Driver",
         "Child seats (on request)",
         "Wi-Fi in vehicle"
       ],
       ja: [
         "空港でのネームプレートお出迎え",
         "荷物サポート",
-        "ロシア語対応ドライバー",
+        "対応ドライバー",
         "チャイルドシート（リクエストに応じて）",
         "車内Wi-Fi"
       ]
@@ -336,21 +336,18 @@ export const servicesData = [
         "Все ингредиенты и инструменты",
         "Пошаговое обучение",
         "Дегустация приготовленного",
-        "Рецепты на русском языке",
         "Сертификат участника"
       ],
       en: [
         "All ingredients and tools",
         "Step-by-step instruction",
         "Tasting of prepared dishes",
-        "Recipes in Russian",
         "Participation certificate"
       ],
       ja: [
         "全材料と道具",
         "段階的指導",
         "調理した料理の試食",
-        "ロシア語レシピ",
         "参加証明書"
       ]
     },
