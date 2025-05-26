@@ -13,8 +13,6 @@ import {
   AdminPage,
   BookingPage,
   BookingConfirmationPage,
-  BlogPage,
-  BlogPostPage,
   TourDetailsPage
 } from '../pages';
 import { useAppContext } from '../context/AppContext';
@@ -150,20 +148,6 @@ function MainComponent() {
             userData={userData}
             handleLogout={handleLogout}
             isLoggedIn={isLoggedIn}
-          />
-        } />
-        <Route path="/blog" element={
-          <BlogPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-          />
-        } />
-        <Route path="/blog-post" element={
-          <BlogPostPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
           />
         } />
       </Routes>

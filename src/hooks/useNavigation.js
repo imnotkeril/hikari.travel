@@ -48,12 +48,6 @@ export const useNavigation = () => {
       case 'admin':
         path = '/admin';
         break;
-      case 'blog':
-        path = '/blog';
-        break;
-      case 'blog-post':
-        path = '/blog-post';
-        break;
       default:
         // Если page не совпадает с известными страницами, используем его как прямой путь
         path = page.startsWith('/') ? page : `/${page}`;

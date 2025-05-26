@@ -23,7 +23,6 @@ function Footer({ currentLang, navigateTo }) {
         home: 'Главная',
         tours: 'Туры',
         about: 'О нас',
-        blog: 'Блог',
         contact: 'Контакты'
       }
     },
@@ -46,7 +45,6 @@ function Footer({ currentLang, navigateTo }) {
         home: 'Home',
         tours: 'Tours',
         about: 'About',
-        blog: 'Blog',
         contact: 'Contact'
       }
     },
@@ -69,7 +67,6 @@ function Footer({ currentLang, navigateTo }) {
         home: 'ホーム',
         tours: 'ツアー',
         about: '会社概要',
-        blog: 'ブログ',
         contact: 'お問い合わせ'
       }
     }
@@ -117,7 +114,6 @@ function Footer({ currentLang, navigateTo }) {
               <li><a href="#" onClick={(e) => handleNavigation('home', e)} className="text-gray-400 hover:text-white">{t.menu.home}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('tours', e)} className="text-gray-400 hover:text-white">{t.menu.tours}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('about', e)} className="text-gray-400 hover:text-white">{t.menu.about}</a></li>
-              <li><a href="#" onClick={(e) => handleNavigation('blog', e)} className="text-gray-400 hover:text-white">{t.menu.blog}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('contact', e)} className="text-gray-400 hover:text-white">{t.menu.contact}</a></li>
             </ul>
           </div>
