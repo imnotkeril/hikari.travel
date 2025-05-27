@@ -2,9 +2,12 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
+import CurrencySelector from './CurrencySelector';
+import { useAppContext } from '../context/AppContext';
 
 function Header({ currentLang, setCurrentLang, navigateTo }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { currentCurrency, setCurrentCurrency } = useAppContext();
 
   // Переводы для меню
   const translations = {
@@ -48,7 +51,6 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
     setIsMenuOpen(false);
   };
 
-  // Для отладки: вывод в консоль при изменении языка
   const handleLanguageChange = (lang) => {
     console.log('Changing language to:', lang);
     setCurrentLang(lang);
@@ -58,11 +60,11 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-        <div className="flex items-center">
-          <a href="#" onClick={(e) => handleNavigation('home', e)} className="flex items-center">
-            <img src="/images/logo.png" alt="Hikari Travel" className="h-10 md:h-12 lg:h-14" />
-          </a>
-        </div>
+          <div className="flex items-center">
+            <a href="#" onClick={(e) => handleNavigation('home', e)} className="flex items-center">
+              <img src="/images/logo.png" alt="Hikari Travel" className="h-10 md:h-12 lg:h-14" />
+            </a>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
@@ -73,9 +75,18 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="text-gray-600 hover:text-pink-500 font-medium">{t.menu.contact}</a>
           </nav>
 
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
+            {/* Currency Selector */}
+            <div className="hidden md:block">
+              <CurrencySelector
+                currentCurrency={currentCurrency}
+                setCurrentCurrency={setCurrentCurrency}
+                currentLang={currentLang}
+              />
+            </div>
+
             {/* Language Selector */}
-            <div className="mr-4">
+            <div className="hidden md:block">
               <LanguageSelector
                 currentLang={currentLang}
                 setCurrentLang={handleLanguageChange}
@@ -85,7 +96,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             {/* Book Now Button - Desktop */}
             <button
               onClick={(e) => handleNavigation('booking', e)}
-              className="hidden md:block bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
+              className="hidden md:block bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded ml-2"
             >
               {t.bookNow}
             </button>
@@ -93,7 +104,7 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-gray-600 hover:text-pink-500"
+              className="md:hidden text-gray-600 hover:text-pink-500 ml-2"
             >
               {isMenuOpen ? (
                 <X className="text-xl" />
@@ -112,6 +123,22 @@ function Header({ currentLang, setCurrentLang, navigateTo }) {
             <a href="#" onClick={(e) => handleNavigation('services', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.services}</a>
             <a href="#" onClick={(e) => handleNavigation('about', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.about}</a>
             <a href="#" onClick={(e) => handleNavigation('contact', e)} className="block py-2 text-gray-600 hover:text-pink-500">{t.menu.contact}</a>
+
+            {/* Mobile Language and Currency Selectors */}
+            <div className="flex items-center justify-between py-3 mt-2 border-t border-gray-200">
+              <div className="flex items-center space-x-4">
+                <CurrencySelector
+                  currentCurrency={currentCurrency}
+                  setCurrentCurrency={setCurrentCurrency}
+                  currentLang={currentLang}
+                />
+                <LanguageSelector
+                  currentLang={currentLang}
+                  setCurrentLang={handleLanguageChange}
+                />
+              </div>
+            </div>
+
             <button
               onClick={(e) => handleNavigation('booking', e)}
               className="mt-3 w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"

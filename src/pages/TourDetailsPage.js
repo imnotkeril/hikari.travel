@@ -22,9 +22,9 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { toursData } from '../data/toursData';
-import ExchangeRateWidget from '../components/ExchangeRateWidget';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../components/ReviewsSection';
+import { useAppContext } from '../context/AppContext';
 
 // Функция для глубокой локализации многоязычных объектов
 const localizeDeep = (obj, currentLang) => {
@@ -57,6 +57,7 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedTour, setSelectedTour] = useState(null);
   const [relatedTours, setRelatedTours] = useState([]);
+  const { convertPrice, formatPrice, currentCurrency } = useAppContext();
 
   // Эффект для загрузки данных о туре
   useEffect(() => {
@@ -139,7 +140,7 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readLess: 'Свернуть',
       freePlaces: 'свободных мест',
       aboutTour: 'О туре',
-      currencyConverter: 'Конвертер валют'
+      price: 'Цена'
     },
     en: {
       backToTours: 'Back to Tours',
@@ -187,7 +188,7 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readLess: 'Read Less',
       freePlaces: 'free places',
       aboutTour: 'About Tour',
-      currencyConverter: 'Currency Converter'
+      price: 'Price'
     },
     ja: {
       backToTours: 'ツアー一覧に戻る',
@@ -235,13 +236,13 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       readLess: '折りたたむ',
       freePlaces: '空き席',
       aboutTour: 'ツアーについて',
-      currencyConverter: '通貨コンバーター'
+      price: '価格'
     }
   };
 
   const t = translations[currentLang];
 
-  // Примерные доступные даты
+  // Примерные доступные даты с конвертацией цен
   const dates = [
     { id: 1, date: '2025-05-15', availablePlaces: 8, price: selectedTour.price },
     { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round(selectedTour.price * 1.08) },
@@ -265,6 +266,10 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       { day: 'numeric', month: 'long', year: 'numeric' }
     );
   };
+
+  // Конвертируем основную цену тура
+  const convertedPrice = convertPrice(selectedTour.price, 'USD', currentCurrency);
+  const formattedPrice = formatPrice(convertedPrice, currentCurrency);
 
 return (
   <div className="min-h-screen bg-white">
@@ -517,7 +522,7 @@ return (
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{t.tourPrice}</h3>
                 <div className="flex items-baseline">
-                  <span className="text-3xl font-bold text-pink-500">${selectedTour.price}</span>
+                  <span className="text-3xl font-bold text-pink-500">{formattedPrice}</span>
                   <span className="ml-2 text-gray-600">{t.perPerson}</span>
                 </div>
               </div>
@@ -544,26 +549,31 @@ return (
                     <MapPin className="w-5 h-5 mr-2 text-pink-500" />
                     <span>{t.route}</span>
                   </div>
-                  <span className="font-bold">{selectedTour.route.length} {t.destinations}</span>
+                  <span className="font-bold">{selectedTour.route.length} destinations</span>
                 </div>
               </div>
 
               <div className="mb-6">
                 <h3 className="font-bold text-gray-800 mb-2">{t.selectDate}</h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {dates.slice(0, 4).map((date, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedDate(date)}
-                      className={`py-2 px-3 rounded-md text-sm ${
-                        selectedDate === date
-                          ? 'bg-pink-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {formatDate(date.date)}
-                    </button>
-                  ))}
+                  {dates.slice(0, 4).map((date, index) => {
+                    const convertedDatePrice = convertPrice(date.price, 'USD', currentCurrency);
+                    const formattedDatePrice = formatPrice(convertedDatePrice, currentCurrency);
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedDate(date)}
+                        className={`py-2 px-3 rounded-md text-sm ${
+                          selectedDate === date
+                            ? 'bg-pink-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {formatDate(date.date)}
+                      </button>
+                    );
+                  })}
                 </div>
                 <button className="w-full text-pink-500 hover:text-pink-600 mt-2">
                   + {dates.length - 4} {t.availableDates}
@@ -579,16 +589,13 @@ return (
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">{t.price}:</span>
-                      <span className="font-bold text-pink-500">${selectedDate.price}</span>
+                      <span className="font-bold text-pink-500">
+                        {formatPrice(convertPrice(selectedDate.price, 'USD', currentCurrency), currentCurrency)}
+                      </span>
                     </div>
                   </div>
                 </div>
               )}
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">{t.currencyConverter}</h3>
-                <ExchangeRateWidget baseCurrency="USD" currentLang={currentLang} />
-              </div>
 
               <button
                 onClick={() => {

@@ -1,8 +1,11 @@
 // src/components/TourCard.js
 import React from 'react';
 import { Calendar, Users, MapPin, Star } from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 
 const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }) => {
+  const { convertPrice, formatPrice, currentCurrency } = useAppContext();
+
   console.log("TourCard rendering:", tour.id);
 
   // Получаем нужные переводы в зависимости от текущего языка
@@ -70,6 +73,10 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
   const rating = tour.rating || 4.8; // Дефолтное значение
   const reviewCount = tour.reviewCount || 24; // Дефолтное значение
 
+  // Конвертируем цену в выбранную валюту
+  const convertedPrice = convertPrice(tour.price, 'USD', currentCurrency);
+  const formattedPrice = formatPrice(convertedPrice, currentCurrency);
+
   return (
     <div
       className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer"
@@ -80,7 +87,7 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
         style={{ backgroundImage: `url(${imageUrl})` }}
       >
         <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
-          {t.from} ${tour.price}
+          {t.from} {formattedPrice}
         </div>
 
         {/* Отображение тегов */}

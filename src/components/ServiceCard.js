@@ -4,18 +4,19 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
-  DollarSign,
   Star,
   Check,
   Calendar,
   Users,
   Info
 } from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 
 const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState(service.options ? service.options[0] : null);
   const [selectedExtras, setSelectedExtras] = useState([]);
+  const { convertPrice, formatPrice, currentCurrency } = useAppContext();
 
   // Переводы
   const translations = {
@@ -80,20 +81,18 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
 
   const t = translations[currentLang];
 
-  // Форматирование цены
-  const formatPrice = (price, currency = 'JPY') => {
-    if (currency === 'JPY') {
-      return `¥${price.toLocaleString()}`;
-    }
-    return `${price}`;
-  };
-
-  // Получение отображаемой цены
+  // Получение отображаемой цены с конвертацией
   const getDisplayPrice = () => {
+    let basePrice;
     if (selectedOption) {
-      return formatPrice(selectedOption.price, service.currency);
+      basePrice = selectedOption.price;
+    } else {
+      basePrice = service.price;
     }
-    return formatPrice(service.price, service.currency);
+
+    // Конвертируем цену из JPY в выбранную валюту
+    const convertedPrice = convertPrice(basePrice, 'JPY', currentCurrency);
+    return formatPrice(convertedPrice, currentCurrency);
   };
 
   // Получение текста типа цены
@@ -116,7 +115,10 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
   const calculateTotalPrice = () => {
     const basePrice = selectedOption ? selectedOption.price : service.price;
     const extrasPrice = selectedExtras.reduce((total, extra) => total + extra.price, 0);
-    return basePrice + extrasPrice;
+    const totalInJPY = basePrice + extrasPrice;
+
+    // Конвертируем общую цену в выбранную валюту
+    return convertPrice(totalInJPY, 'JPY', currentCurrency);
   };
 
   // Обработчик выбора дополнительных услуг
@@ -138,30 +140,35 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
       selectedOption: selectedOption,
       selectedExtras: selectedExtras,
       totalPrice: calculateTotalPrice(),
-      currentLang: currentLang
+      currentLang: currentLang,
+      currency: currentCurrency
     };
     onBook(bookingData);
   };
 
-  // Получение бейджа для типа услуги
-  const getTypeBadge = () => {
-    if (service.type === 'popular') {
-      return <span className="absolute top-2 left-2 bg-pink-500 text-white text-xs px-2 py-1 rounded-full">{t.popular}</span>;
-    }
-    if (service.type === 'seasonal') {
-      return <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">{t.seasonal}</span>;
-    }
-    return null;
-  };
-
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg ${className}`}>
-      {/* Изображение и бейдж */}
+      {/* Изображение и цена */}
       <div className="relative h-48 bg-gray-200 bg-cover bg-center" style={{ backgroundImage: `url(${service.image})` }}>
-        {getTypeBadge()}
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
-          {getPriceTypeText()} {getDisplayPrice()}
+        <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
+          {t.from} {getDisplayPrice()}
         </div>
+
+        {/* Бейдж популярности внизу слева (только один) */}
+        {service.type === 'popular' && (
+          <div className="absolute bottom-4 left-4">
+            <span className="bg-pink-500 text-white text-xs px-2 py-1 rounded-full">
+              {t.popular}
+            </span>
+          </div>
+        )}
+        {service.type === 'seasonal' && (
+          <div className="absolute bottom-4 left-4">
+            <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+              {t.seasonal}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Основная информация */}
@@ -185,7 +192,7 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
           </div>
         )}
 
-        {/* Краткая информация */}
+        {/* Краткая информация - убираем валюту */}
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           {service.duration && (
             <div className="flex items-center">
@@ -193,9 +200,10 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
               <span>{service.duration}</span>
             </div>
           )}
+          {/* Рейтинг вместо валюты */}
           <div className="flex items-center">
-            <DollarSign className="w-4 h-4 mr-1" />
-            <span>{service.currency}</span>
+            <Star className="w-4 h-4 mr-1 text-yellow-500" />
+            <span>{service.rating || 4.8}</span>
           </div>
         </div>
 
@@ -259,28 +267,33 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
             <div className="mb-4">
               <h4 className="font-medium text-gray-800 mb-2">{t.options}</h4>
               <div className="space-y-2">
-                {service.options.map((option, index) => (
-                  <label key={index} className="flex items-start cursor-pointer">
-                    <input
-                      type="radio"
-                      name={`service-${service.id}-option`}
-                      checked={selectedOption === option}
-                      onChange={() => setSelectedOption(option)}
-                      className="mt-1 mr-3 text-pink-500"
-                    />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-medium text-sm">{option.name[currentLang]}</div>
-                          <div className="text-xs text-gray-500">{option.description[currentLang]}</div>
-                        </div>
-                        <div className="text-sm font-medium text-pink-600">
-                          {formatPrice(option.price, service.currency)}
+                {service.options.map((option, index) => {
+                  const convertedOptionPrice = convertPrice(option.price, 'JPY', currentCurrency);
+                  const formattedOptionPrice = formatPrice(convertedOptionPrice, currentCurrency);
+
+                  return (
+                    <label key={index} className="flex items-start cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`service-${service.id}-option`}
+                        checked={selectedOption === option}
+                        onChange={() => setSelectedOption(option)}
+                        className="mt-1 mr-3 text-pink-500"
+                      />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-medium text-sm">{option.name[currentLang]}</div>
+                            <div className="text-xs text-gray-500">{option.description[currentLang]}</div>
+                          </div>
+                          <div className="text-sm font-medium text-pink-600">
+                            {formattedOptionPrice}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </label>
-                ))}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -290,22 +303,27 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
             <div className="mb-4">
               <h4 className="font-medium text-gray-800 mb-2">{t.extras}</h4>
               <div className="space-y-2">
-                {service.extras.map((extra, index) => (
-                  <label key={index} className="flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedExtras.some(e => e.name[currentLang] === extra.name[currentLang])}
-                        onChange={() => handleExtraToggle(extra)}
-                        className="mr-3 text-pink-500"
-                      />
-                      <span className="text-sm">{extra.name[currentLang]}</span>
-                    </div>
-                    <span className="text-sm font-medium text-pink-600">
-                      +{formatPrice(extra.price, service.currency)}
-                    </span>
-                  </label>
-                ))}
+                {service.extras.map((extra, index) => {
+                  const convertedExtraPrice = convertPrice(extra.price, 'JPY', currentCurrency);
+                  const formattedExtraPrice = formatPrice(convertedExtraPrice, currentCurrency);
+
+                  return (
+                    <label key={index} className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedExtras.some(e => e.name[currentLang] === extra.name[currentLang])}
+                          onChange={() => handleExtraToggle(extra)}
+                          className="mr-3 text-pink-500"
+                        />
+                        <span className="text-sm">{extra.name[currentLang]}</span>
+                      </div>
+                      <span className="text-sm font-medium text-pink-600">
+                        +{formattedExtraPrice}
+                      </span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -331,7 +349,7 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
               <div className="flex justify-between items-center">
                 <span className="font-medium text-gray-800">{t.totalPrice}:</span>
                 <span className="text-lg font-bold text-pink-600">
-                  {formatPrice(calculateTotalPrice(), service.currency)}
+                  {formatPrice(calculateTotalPrice(), currentCurrency)}
                 </span>
               </div>
             </div>
@@ -343,7 +361,7 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
               onClick={handleBook}
               className="w-full bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-4 rounded"
             >
-              {t.bookNow} - {formatPrice(calculateTotalPrice(), service.currency)}
+              {t.bookNow} - {formatPrice(calculateTotalPrice(), currentCurrency)}
             </button>
           </div>
         </div>

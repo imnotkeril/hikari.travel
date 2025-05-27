@@ -10,8 +10,9 @@ import {
   Menu, 
   X 
 } from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 
-function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBooking }) {
+function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, saveBooking }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -32,7 +33,16 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
     acceptTerms: false
   });
   
-  // Если тур не передан, используем временный тур
+  // Получаем функции конвертации валют из контекста
+  const { convertPrice, formatPrice, currentCurrency } = useAppContext();
+  
+  // Определяем, что бронируем - тур или услугу
+  const selectedTour = tour;
+  const selectedService = service;
+  const isBookingTour = !!selectedTour;
+  const isBookingService = !!selectedService;
+  
+  // Если ни тур, ни услуга не выбраны, используем временный тур
   const defaultTour = {
     id: 1,
     title: 'Classic Japan',
@@ -44,7 +54,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
     reviewCount: 28
   };
   
-  const selectedTour = tour || defaultTour;
+  const bookingItem = selectedTour || selectedService || defaultTour;
   
   // Переводы
   const translations = {
@@ -52,6 +62,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       menu: {
         home: 'Главная',
         tours: 'Туры',
+        services: 'Услуги',
         about: 'О нас',
         blog: 'Блог',
         contact: 'Контакты'
@@ -64,8 +75,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       previous: 'Назад',
       next: 'Далее',
       tourDetails: 'Детали тура',
+      serviceDetails: 'Детали услуги',
       duration: 'Длительность',
       days: 'дней',
+      hours: 'часов',
       groupSize: 'Размер группы',
       upTo: 'до',
       people: 'человек',
@@ -98,7 +111,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       payNow: 'Оплатить сейчас',
       bookingSummary: 'Сводка бронирования',
       tourName: 'Название тура',
+      serviceName: 'Название услуги',
       departureDate: 'Дата отправления',
+      serviceDate: 'Дата услуги',
       numberOfParticipants: 'Количество участников',
       totalPrice: 'Общая стоимость',
       subtotal: 'Подытог',
@@ -109,6 +124,8 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       guidedTours: 'Экскурсии с гидом',
       breakfasts: 'Завтраки',
       entranceFees: 'Входные билеты',
+      guide: 'Гид',
+      activities: 'Мероприятия',
       flights: 'Авиабилеты',
       otherMeals: 'Другие приемы пищи',
       personalExpenses: 'Личные расходы',
@@ -123,30 +140,20 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       invalidCVV: 'Неверный CVV код',
       termsRequired: 'Необходимо принять условия',
       backToTours: 'Вернуться к турам',
-      bookingTitle: 'Бронирование тура',
+      backToServices: 'Вернуться к услугам',
+      bookingTitle: 'Бронирование',
       youSelected: 'Выбранный тур',
+      serviceSelected: 'Выбранная услуга',
       modifySelection: 'Изменить выбор',
       continueToPayment: 'Продолжить к оплате',
       yourBooking: 'Ваше бронирование',
-      price: 'Цена',
-      footer: {
-        about: 'О Hikari Travel',
-        aboutText: 'Мы специализируемся на организации уникальных туров по Японии с русскоговорящими и англоговорящими гидами.',
-        quickLinks: 'Быстрые ссылки',
-        contact: 'Контакты',
-        subscribe: 'Подпишитесь на новости',
-        subscribeText: 'Получайте эксклюзивные предложения и новости о Японии',
-        emailPlaceholder: 'Ваш email',
-        subscribeButton: 'Подписаться',
-        copyright: 'Все права защищены',
-        terms: 'Условия использования',
-        privacy: 'Политика конфиденциальности'
-      }
+      price: 'Цена'
     },
     en: {
       menu: {
         home: 'Home',
         tours: 'Tours',
+        services: 'Services',
         about: 'About',
         blog: 'Blog',
         contact: 'Contact'
@@ -159,8 +166,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       previous: 'Previous',
       next: 'Next',
       tourDetails: 'Tour Details',
+      serviceDetails: 'Service Details',
       duration: 'Duration',
       days: 'days',
+      hours: 'hours',
       groupSize: 'Group Size',
       upTo: 'up to',
       people: 'people',
@@ -193,7 +202,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       payNow: 'Pay Now',
       bookingSummary: 'Booking Summary',
       tourName: 'Tour Name',
+      serviceName: 'Service Name',
       departureDate: 'Departure Date',
+      serviceDate: 'Service Date',
       numberOfParticipants: 'Number of Participants',
       totalPrice: 'Total Price',
       subtotal: 'Subtotal',
@@ -204,6 +215,8 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       guidedTours: 'Guided Tours',
       breakfasts: 'Breakfasts',
       entranceFees: 'Entrance Fees',
+      guide: 'Guide',
+      activities: 'Activities',
       flights: 'Flights',
       otherMeals: 'Other Meals',
       personalExpenses: 'Personal Expenses',
@@ -218,30 +231,20 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       invalidCVV: 'Invalid CVV code',
       termsRequired: 'You must accept the terms',
       backToTours: 'Back to Tours',
-      bookingTitle: 'Tour Booking',
+      backToServices: 'Back to Services',
+      bookingTitle: 'Booking',
       youSelected: 'Selected Tour',
+      serviceSelected: 'Selected Service',
       modifySelection: 'Modify Selection',
       continueToPayment: 'Continue to Payment',
       yourBooking: 'Your Booking',
-      price: 'Price',
-      footer: {
-        about: 'About Hikari Travel',
-        aboutText: 'We specialize in organizing unique tours across Japan with Russian and English speaking guides.',
-        quickLinks: 'Quick Links',
-        contact: 'Contact',
-        subscribe: 'Subscribe to Newsletter',
-        subscribeText: 'Get exclusive offers and news about Japan',
-        emailPlaceholder: 'Your email',
-        subscribeButton: 'Subscribe',
-        copyright: 'All Rights Reserved',
-        terms: 'Terms of Service',
-        privacy: 'Privacy Policy'
-      }
+      price: 'Price'
     },
     ja: {
       menu: {
         home: 'ホーム',
         tours: 'ツアー',
+        services: 'サービス',
         about: '会社概要',
         blog: 'ブログ',
         contact: 'お問い合わせ'
@@ -254,8 +257,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       previous: '戻る',
       next: '次へ',
       tourDetails: 'ツアー詳細',
+      serviceDetails: 'サービス詳細',
       duration: '期間',
       days: '日間',
+      hours: '時間',
       groupSize: 'グループサイズ',
       upTo: '最大',
       people: '人',
@@ -288,7 +293,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       payNow: '今すぐ支払う',
       bookingSummary: '予約概要',
       tourName: 'ツアー名',
+      serviceName: 'サービス名',
       departureDate: '出発日',
+      serviceDate: 'サービス日',
       numberOfParticipants: '参加者数',
       totalPrice: '合計金額',
       subtotal: '小計',
@@ -299,6 +306,8 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       guidedTours: 'ガイド付きツアー',
       breakfasts: '朝食',
       entranceFees: '入場料',
+      guide: 'ガイド',
+      activities: 'アクティビティ',  
       flights: '航空券',
       otherMeals: 'その他の食事',
       personalExpenses: '個人的な支出',
@@ -313,42 +322,36 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       invalidCVV: '無効なCVVコード',
       termsRequired: '利用規約に同意する必要があります',
       backToTours: 'ツアー一覧に戻る',
-      bookingTitle: 'ツアー予約',
+      backToServices: 'サービス一覧に戻る',
+      bookingTitle: '予約',
       youSelected: '選択したツアー',
+      serviceSelected: '選択したサービス',
       modifySelection: '選択を変更',
       continueToPayment: '支払いに進む',
       yourBooking: 'ご予約',
-      price: '価格',
-      footer: {
-        about: 'ひかりトラベルについて',
-        aboutText: '私たちはロシア語と英語を話すガイドによる日本全国のユニークなツアーを専門としています。',
-        quickLinks: 'クイックリンク',
-        contact: 'お問い合わせ',
-        subscribe: 'ニュースレターを購読',
-        subscribeText: '日本に関する限定オファーとニュースを入手',
-        emailPlaceholder: 'メールアドレス',
-        subscribeButton: '購読',
-        copyright: '全著作権所有',
-        terms: '利用規約',
-        privacy: 'プライバシーポリシー'
-      }
+      price: '価格'
     }
   };
 
   const t = translations[currentLang];
   
-  // Примерные доступные даты
+  // Примерные доступные даты с конвертацией цен
   const dates = [
-    { id: 1, date: '2025-05-15', availablePlaces: 8, price: selectedTour.price },
-    { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round(selectedTour.price * 1.08) },
-    { id: 3, date: '2025-06-05', availablePlaces: 10, price: Math.round(selectedTour.price * 0.92) },
-    { id: 4, date: '2025-06-12', availablePlaces: 2, price: Math.round(selectedTour.price * 1.12) },
-    { id: 5, date: '2025-06-19', availablePlaces: 7, price: selectedTour.price },
+    { id: 1, date: '2025-05-15', availablePlaces: 8, price: bookingItem.price || 2500 },
+    { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round((bookingItem.price || 2500) * 1.08) },
+    { id: 3, date: '2025-06-05', availablePlaces: 10, price: Math.round((bookingItem.price || 2500) * 0.92) },
+    { id: 4, date: '2025-06-12', availablePlaces: 2, price: Math.round((bookingItem.price || 2500) * 1.12) },
+    { id: 5, date: '2025-06-19', availablePlaces: 7, price: bookingItem.price || 2500 },
   ];
   
   // Примерные включенные и исключенные пункты
-  const included = ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'];
-  const excluded = ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'];
+  const included = isBookingTour ? 
+    ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'] :
+    ['guide', 'activities', 'transportation'];
+    
+  const excluded = isBookingTour ?
+    ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'] :
+    ['accommodation', 'flights', 'personalExpenses'];
   
   // Обработчики
   const handleNextStep = () => {
@@ -358,13 +361,15 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
     } else {
       // Если последний шаг, отправляем данные бронирования
       const bookingData = {
-        tour: selectedTour,
+        tour: isBookingTour ? selectedTour : null,
+        service: isBookingService ? selectedService : null,
         date: selectedDate,
         participants,
         contactInfo,
         paymentInfo,
         totalPrice: calculateTotal(),
-        bookingId: `HT-${Date.now().toString().substr(-8)}`
+        bookingId: `HT-${Date.now().toString().substr(-8)}`,
+        currency: currentCurrency
       };
       saveBooking(bookingData);
     }
@@ -375,7 +380,13 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
       setCurrentStep(currentStep - 1);
       window.scrollTo(0, 0);
     } else {
-      navigateTo('tours');
+      if (isBookingTour) {
+        navigateTo('tours');
+      } else if (isBookingService) {
+        navigateTo('services');
+      } else {
+        navigateTo('tours');
+      }
     }
   };
   
@@ -417,15 +428,28 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
     return true;
   };
   
-  // Расчет общей стоимости
+  // Расчет общей стоимости с конвертацией валют
   const calculateTotal = () => {
     if (!selectedDate) return { subtotal: 0, tax: 0, total: 0 };
-    const basePrice = selectedDate.price * (participants.adults + (participants.children * 0.7));
-    const tax = Math.round(basePrice * 0.1);
+    
+    let basePrice;
+    if (isBookingService && selectedService.totalPrice) {
+      // Для услуг используем уже рассчитанную цену
+      basePrice = selectedService.totalPrice;
+    } else {
+      // Для туров рассчитываем базовую цену
+      const pricePerPerson = selectedDate.price;
+      basePrice = pricePerPerson * (participants.adults + (participants.children * 0.7));
+    }
+    
+    // Конвертируем цену в выбранную валюту
+    const convertedPrice = convertPrice(basePrice, isBookingService ? 'JPY' : 'USD', currentCurrency);
+    const tax = Math.round(convertedPrice * 0.1);
+    
     return {
-      subtotal: basePrice,
+      subtotal: convertedPrice,
       tax,
-      total: basePrice + tax
+      total: convertedPrice + tax
     };
   };
   
@@ -460,7 +484,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
         <div className="flex items-center mb-6 text-sm">
           <a href="#" onClick={() => navigateTo('home')} className="text-gray-500 hover:text-pink-500">{t.menu.home}</a>
           <span className="mx-2 text-gray-400">/</span>
-          <a href="#" onClick={() => navigateTo('tours')} className="text-gray-500 hover:text-pink-500">{t.menu.tours}</a>
+          <a href="#" onClick={() => navigateTo(isBookingService ? 'services' : 'tours')} className="text-gray-500 hover:text-pink-500">
+            {isBookingService ? t.menu.services : t.menu.tours}
+          </a>
           <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-700">{t.bookingTitle}</span>
         </div>
@@ -508,24 +534,29 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
                   <div className="mb-6">
                     <h3 className="font-bold text-gray-700 mb-2">{t.upcomingDepartures}</h3>
                     <div className="space-y-4">
-                      {dates.map((date) => (
-                        <div 
-                          key={date.id} 
-                          className={`border ${selectedDate && selectedDate.id === date.id ? 'border-pink-500' : 'border-gray-200'} rounded-lg p-4 hover:border-pink-500 transition duration-300 cursor-pointer`}
-                          onClick={() => setSelectedDate(date)}
-                        >
-                          <div className="flex flex-wrap justify-between items-center">
-                            <div className="mr-4">
-                              <div className="font-bold text-gray-800">{formatDate(date.date)}</div>
-                              <div className="text-green-600">{date.availablePlaces} {t.freePlaces}</div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-gray-600">{t.pricePerPerson}</div>
-                              <div className="font-bold text-pink-500 text-xl">${date.price}</div>
+                      {dates.map((date) => {
+                        const convertedPrice = convertPrice(date.price, isBookingService ? 'JPY' : 'USD', currentCurrency);
+                        const formattedPrice = formatPrice(convertedPrice, currentCurrency);
+                        
+                        return (
+                          <div 
+                            key={date.id} 
+                            className={`border ${selectedDate && selectedDate.id === date.id ? 'border-pink-500' : 'border-gray-200'} rounded-lg p-4 hover:border-pink-500 transition duration-300 cursor-pointer`}
+                            onClick={() => setSelectedDate(date)}
+                          >
+                            <div className="flex flex-wrap justify-between items-center">
+                              <div className="mr-4">
+                                <div className="font-bold text-gray-800">{formatDate(date.date)}</div>
+                                <div className="text-green-600">{date.availablePlaces} {t.freePlaces}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-gray-600">{t.pricePerPerson}</div>
+                                <div className="font-bold text-pink-500 text-xl">{formattedPrice}</div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </>
@@ -809,42 +840,63 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
             </div>
           </div>
           
-          {/* Sidebar - Tour Summary */}
+          {/* Sidebar - Booking Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-bold text-gray-800 mb-4">{t.yourBooking}</h2>
               
               <div className="mb-4">
-                <img src={selectedTour.image} alt={selectedTour.title} className="w-full h-40 object-cover rounded-lg mb-4" />
-                <h3 className="text-lg font-bold mb-2">{selectedTour.title}</h3>
+                <img 
+                  src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'} 
+                  alt={bookingItem.title || bookingItem.name} 
+                  className="w-full h-40 object-cover rounded-lg mb-4" 
+                />
+                <h3 className="text-lg font-bold mb-2">
+                  {isBookingTour ? 
+                    (bookingItem.title?.[currentLang] || bookingItem.title) : 
+                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service')
+                  }
+                </h3>
+                
                 <div className="flex items-center mb-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
-                        className={`w-4 h-4 ${i < Math.floor(selectedTour.rating) ? 'text-yellow-500' : 'text-gray-300'}`} 
+                        className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`} 
                       />
                     ))}
                   </div>
-                  <span className="ml-1 text-gray-600">{selectedTour.rating}</span>
+                  <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
                   <span className="mx-1 text-gray-400">·</span>
-                  <span className="text-gray-600">{selectedTour.reviewCount} {t.reviewsCount}</span>
+                  <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
                 </div>
                 
                 <div className="flex justify-between mb-1">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    <span>{selectedTour.duration} {t.days}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-1" />
-                    <span>{t.upTo} {selectedTour.groupSize}</span>
-                  </div>
+                  {isBookingTour ? (
+                    <>
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span>{bookingItem.duration} {t.days}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <Users className="w-4 h-4 mr-1" />
+                        <span>{t.upTo} {bookingItem.groupSize}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center text-gray-600">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span>{bookingItem.duration || '2-3 hours'}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {selectedDate && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="font-medium text-gray-700">{t.departureDate}</p>
+                    <p className="font-medium text-gray-700">
+                      {isBookingTour ? t.departureDate : t.serviceDate}
+                    </p>
                     <p className="text-gray-900">{formatDate(selectedDate.date)}</p>
                   </div>
                 )}
@@ -865,17 +917,17 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, saveBookin
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between">
                       <span className="text-gray-600">{t.subtotal}</span>
-                      <span className="font-medium">${calculateTotal().subtotal}</span>
+                      <span className="font-medium">{formatPrice(calculateTotal().subtotal, currentCurrency)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">{t.tax} (10%)</span>
-                      <span className="font-medium">${calculateTotal().tax}</span>
+                      <span className="font-medium">{formatPrice(calculateTotal().tax, currentCurrency)}</span>
                     </div>
                   </div>
                   
                   <div className="flex justify-between border-t border-gray-200 pt-2 font-bold">
                     <span>{t.total}</span>
-                    <span className="text-pink-600">${calculateTotal().total}</span>
+                    <span className="text-pink-600">{formatPrice(calculateTotal().total, currentCurrency)}</span>
                   </div>
                 </div>
               )}

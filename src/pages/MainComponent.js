@@ -22,6 +22,8 @@ function MainComponent() {
   const {
     currentLang,
     setCurrentLang,
+    currentCurrency,
+    setCurrentCurrency,
     selectedTour,
     setSelectedTour,
     selectedService,
