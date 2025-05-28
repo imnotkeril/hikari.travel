@@ -67,11 +67,11 @@ function ContactPage({ currentLang, setCurrentLang, navigateTo }) {
               <div className="space-y-4">
                 <div>
                   <p className="font-bold mb-1">{t.address}</p>
-                  <p>1-1-1 Chiyoda, Chiyoda-ku, Tokyo, Japan</p>
+                  <p>Tokyo, Japan</p>
                 </div>
                 <div>
                   <p className="font-bold mb-1">{t.phone}</p>
-                  <p>+81 90-1234-5678</p>
+                  <p>+81 80-8212-0821</p>
                 </div>
                 <div>
                   <p className="font-bold mb-1">{t.emailAddress}</p>

@@ -261,7 +261,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       <section
         className="relative bg-cover bg-center flex"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/services.jpg)',
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/services.png)',
           height: '60vh'
         }}
       >

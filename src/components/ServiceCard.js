@@ -181,32 +181,6 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
           {service.shortDescription[currentLang]}
         </p>
 
-        {/* Теги */}
-        {service.tags && service.tags[currentLang] && (
-          <div className="flex flex-wrap gap-1 mb-3">
-            {service.tags[currentLang].slice(0, 3).map((tag, index) => (
-              <span key={index} className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Краткая информация - убираем валюту */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-          {service.duration && (
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{service.duration}</span>
-            </div>
-          )}
-          {/* Рейтинг вместо валюты */}
-          <div className="flex items-center">
-            <Star className="w-4 h-4 mr-1 text-yellow-500" />
-            <span>{service.rating || 4.8}</span>
-          </div>
-        </div>
-
         {/* Кнопки действий */}
         <div className="flex space-x-2">
           <button

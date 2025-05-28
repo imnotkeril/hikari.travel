@@ -20,6 +20,7 @@ const ReviewsSection = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showAll, setShowAll] = useState(false);
+  const [imageErrors, setImageErrors] = useState(new Set());
 
   // Получаем нужные переводы в зависимости от варианта использования
   const translations = {
@@ -122,6 +123,33 @@ const ReviewsSection = ({
     );
   };
 
+  // Обработчик ошибки загрузки изображения
+  const handleImageError = (reviewId) => {
+    setImageErrors(prev => new Set([...prev, reviewId]));
+  };
+
+  // Компонент аватара с fallback на эмодзи
+  const ReviewAvatar = ({ review }) => {
+    const hasImageError = imageErrors.has(review.id);
+
+    if (hasImageError || !review.author.image) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center text-white text-xl">
+          😊
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={review.author.image}
+        alt={review.author.name}
+        className="w-12 h-12 rounded-full object-cover"
+        onError={() => handleImageError(review.id)}
+      />
+    );
+  };
+
   // Если отзывов нет
   if (reviews.length === 0) {
     return (
@@ -171,12 +199,8 @@ const ReviewsSection = ({
         {/* Слайдер */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <div className="flex items-center mb-4">
-            <img
-              src={displayedReviews[currentSlide].author.image}
-              alt={displayedReviews[currentSlide].author.name}
-              className="w-12 h-12 rounded-full object-cover mr-4"
-            />
-            <div>
+            <ReviewAvatar review={displayedReviews[currentSlide]} />
+            <div className="ml-4">
               <div className="flex items-center">
                 <h3 className="text-lg font-bold text-gray-800 mr-2">{displayedReviews[currentSlide].author.name}</h3>
                 <span className="text-gray-500 text-sm">{formatDate(displayedReviews[currentSlide].date)}</span>
@@ -254,12 +278,8 @@ const ReviewsSection = ({
           {displayedReviews.map((review) => (
             <div key={review.id} className="bg-white p-6 rounded-lg shadow-md">
               <div className="flex items-center mb-4">
-                <img
-                  src={review.author.image}
-                  alt={review.author.name}
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div>
+                <ReviewAvatar review={review} />
+                <div className="ml-4">
                   <h3 className="text-lg font-bold text-gray-800">{review.author.name}</h3>
                   <p className="text-gray-500 text-sm">{review.author.location[currentLang]}</p>
                   {showRating && (
@@ -324,12 +344,8 @@ const ReviewsSection = ({
         {displayedReviews.map((review) => (
           <div key={review.id} className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex items-center mb-4">
-              <img
-                src={review.author.image}
-                alt={review.author.name}
-                className="w-12 h-12 rounded-full object-cover mr-4"
-              />
-              <div>
+              <ReviewAvatar review={review} />
+              <div className="ml-4">
                 <div className="flex items-center">
                   <h3 className="text-lg font-bold text-gray-800 mr-2">{review.author.name}</h3>
                   <span className="text-gray-500 text-sm">{formatDate(review.date)}</span>

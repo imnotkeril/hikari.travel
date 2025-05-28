@@ -7,7 +7,7 @@ function Footer({ currentLang, navigateTo }) {
     ru: {
       footer: {
         about: 'О Hikari Travel',
-        aboutText: 'Мы специализируемся на организации уникальных туров по Японии с русскоговорящими и англоговорящими гидами.',
+        aboutText: 'Мы специализируемся на организации уникальных туров по Японии!',
         quickLinks: 'Быстрые ссылки',
         contact: 'Контакты',
         subscribe: 'Подпишитесь на новости',
@@ -29,7 +29,7 @@ function Footer({ currentLang, navigateTo }) {
     en: {
       footer: {
         about: 'About Hikari Travel',
-        aboutText: 'We specialize in organizing unique tours across Japan with Russian and English speaking guides.',
+        aboutText: 'We specialize in organizing unique tours across Japan!',
         quickLinks: 'Quick Links',
         contact: 'Contact',
         subscribe: 'Subscribe to Newsletter',
@@ -51,7 +51,7 @@ function Footer({ currentLang, navigateTo }) {
     ja: {
       footer: {
         about: 'ひかりトラベルについて',
-        aboutText: '私たちはロシア語と英語を話すガイドによる日本全国のユニークなツアーを専門としています。',
+        aboutText: '私たちは日本全国を巡るユニークなツアーの企画を専門としています！',
         quickLinks: 'クイックリンク',
         contact: 'お問い合わせ',
         subscribe: 'ニュースレターを購読',
@@ -123,7 +123,7 @@ function Footer({ currentLang, navigateTo }) {
             <ul className="space-y-2">
               <li className="text-gray-400">Tokyo, Japan</li>
               <li className="text-gray-400">info@hikaritravel.com</li>
-              <li className="text-gray-400">+81 90-1234-5678</li>
+              <li className="text-gray-400">+81 80-8212-0821</li>
             </ul>
           </div>
           
