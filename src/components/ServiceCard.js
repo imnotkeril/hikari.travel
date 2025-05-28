@@ -149,7 +149,7 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg ${className}`}>
       {/* Изображение и цена */}
-      <div className="relative h-48 bg-gray-200 bg-cover bg-center" style={{ backgroundImage: `url(${service.image})` }}>
+      <div className="relative h-60 bg-gray-200 bg-cover bg-center" style={{ backgroundImage: `url(${service.image})` }}>
         <div className="absolute top-4 right-4 bg-white py-1 px-3 rounded-full text-pink-500 font-bold">
           {t.from} {getDisplayPrice()}
         </div>

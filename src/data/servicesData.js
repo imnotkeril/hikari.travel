@@ -24,7 +24,7 @@ export const servicesData = [
       en: "Comfortable transfers with drivers throughout Japan. Airport pickup with nameplate, luggage assistance, Wi-Fi in the vehicle.",
       ja: "日本全国でドライバーによる快適な送迎サービス。空港でのネームプレートお出迎え、荷物サポート、車内Wi-Fi完備。"
     },
-    image: "https://source.unsplash.com/featured/?japan,car,transfer",
+    image: '/images/services/transfer-taxi.png',
     price: 15000,
     priceType: "from", // from, fixed, per_hour
     currency: "JPY",
@@ -123,7 +123,7 @@ export const servicesData = [
       en: "Professional photos in the most beautiful places in Japan. 2-3 hours of shooting, 50-100 processed photos, all RAW originals.",
       ja: "日本の最も美しい場所でのプロ写真撮影。2-3時間の撮影、50-100枚の加工済み写真、RAW形式の全オリジナル。"
     },
-    image: "https://source.unsplash.com/featured/?japan,photography,kimono",
+    image: '/images/services/photo-session.jpg',
     price: 35000,
     priceType: "fixed",
     currency: "JPY",
@@ -235,7 +235,7 @@ export const servicesData = [
       en: "Kimono and yukata rental for authentic photos and walks. Includes dressing assistance, all accessories and simple hairstyling.",
       ja: "本格的な写真撮影や散策のための着物・浴衣レンタル。着付けサポート、全アクセサリー、簡単なヘアスタイリング込み。"
     },
-    image: "https://source.unsplash.com/featured/?kimono,japan,traditional",
+    image: '/images/services/kimono-rental.png',
     price: 4000,
     priceType: "from",
     currency: "JPY",
@@ -326,7 +326,7 @@ export const servicesData = [
       en: "Learn to cook traditional Japanese dishes with local chefs. Includes all ingredients, step-by-step instruction and tasting.",
       ja: "地元のシェフと一緒に伝統的な日本料理を学ぶ。全材料、段階的指導、試食込み。"
     },
-    image: "https://source.unsplash.com/featured/?sushi,cooking,japan",
+    image: '/images/services/cooking-class.png',
     price: 8000,
     priceType: "from",
     currency: "JPY",
@@ -417,7 +417,7 @@ export const servicesData = [
       en: "Traditional Japanese tea ceremony with sado master. Philosophy explanation, matcha tasting and traditional sweets.",
       ja: "茶道師による伝統的な日本の茶道。哲学の説明、抹茶と伝統菓子の試飲。"
     },
-    image: "https://source.unsplash.com/featured/?tea,ceremony,japan",
+    image: '/images/services/tea-ceremony.png',
     price: 4000,
     priceType: "from",
     currency: "JPY",
@@ -511,7 +511,7 @@ export const servicesData = [
       en: "Professional Japanese sake tasting with expert. Production process explanation, sake history and traditions.",
       ja: "専門家による日本酒のプロ試飲。製造工程の説明、日本酒の歴史と伝統。"
     },
-    image: "https://source.unsplash.com/featured/?sake,japan,tasting",
+    image: '/images/services/sake-tasting.png',
     price: 5000,
     priceType: "from",
     currency: "JPY",
@@ -605,7 +605,7 @@ export const servicesData = [
       en: "Table reservations at Japan's best restaurants, including Michelin-starred. Search by preferences, menu selection assistance.",
       ja: "ミシュラン星付きを含む日本最高のレストランでのテーブル予約。好みに応じた検索、メニュー選択サポート。"
     },
-    image: "https://source.unsplash.com/featured/?japanese,restaurant,fine-dining",
+    image: '/images/services/restaurant-booking.png',
     price: 2000,
     priceType: "from",
     currency: "JPY",
@@ -717,7 +717,7 @@ export const servicesData = [
       en: "Getting tickets for popular Japanese events and shows. Traditional performances, sports, concerts, festivals.",
       ja: "人気の日本のイベントやショーのチケット取得。伝統芸能、スポーツ、コンサート、祭り。"
     },
-    image: "https://source.unsplash.com/featured/?japan,kabuki,sumo",
+    image: '/images/services/event-tickets.png',
     price: 2000,
     priceType: "from",
     currency: "JPY",
@@ -811,7 +811,7 @@ export const servicesData = [
       en: "Private hot spring reservations for families and groups. Includes 1-2 hour rental, towels and amenities.",
       ja: "家族・グループ向け貸切温泉予約。1-2時間のレンタル、タオル・アメニティ込み。"
     },
-    image: "https://source.unsplash.com/featured/?onsen,japan,hot-spring",
+    image: '/images/services/private-onsen.png',
     price: 12000,
     priceType: "from",
     currency: "JPY",
@@ -923,7 +923,7 @@ export const servicesData = [
       en: "Personal itineraries considering interests, budget and hidden gems. Detailed daily plans, hotel and restaurant recommendations.",
       ja: "興味・予算・隠れた名所を考慮した個人旅程。詳細な日程表、ホテル・レストラン推奨。"
     },
-    image: "https://source.unsplash.com/featured/?japan,map,planning",
+    image: '/images/services/custom-itinerary.png',
     price: 15000,
     priceType: "from",
     currency: "JPY",
@@ -1030,7 +1030,7 @@ export const servicesData = [
       en: "Assistance with selecting and arranging transport passes. Route savings calculation, processing and delivery.",
       ja: "交通パスの選択・手配サポート。ルート節約計算、処理・配送。"
     },
-    image: "https://source.unsplash.com/featured/?japan,train,shinkansen",
+    image: '/images/services/jr-pass.png',
     price: 2000,
     priceType: "from",
     currency: "JPY",
@@ -1124,7 +1124,7 @@ export const servicesData = [
       en: "Traditional hanami and momiji-gari picnic organization. Best spot reservations, traditional bento, tradition explanations.",
       ja: "伝統的な花見・紅葉狩りピクニック企画。最高の場所の予約、伝統弁当、伝統説明。"
     },
-    image: "https://source.unsplash.com/featured/?hanami,sakura,picnic",
+    image: '/images/services/hanami-picnic.png',
     price: 6000,
     priceType: "from",
     currency: "JPY",
@@ -1236,7 +1236,7 @@ export const servicesData = [
       en: "Masterclasses in traditional Japanese arts. All materials included, finished work as a gift.",
       ja: "伝統的な日本の芸術体験教室。全材料込み、完成作品をプレゼント。"
     },
-    image: "https://source.unsplash.com/featured/?calligraphy,origami,ikebana",
+    image: '/images/services/art-classes.png',
     price: 4000,
     priceType: "from",
     currency: "JPY",
@@ -1343,7 +1343,7 @@ export const servicesData = [
       en: "Reliable mobile internet throughout Japan. SIM cards, Pocket WiFi, eSIM. 99% territory coverage.",
       ja: "日本全国で信頼できるモバイルインターネット。SIMカード、ポケットWiFi、eSIM。99%の地域カバー。"
     },
-    image: "https://source.unsplash.com/featured/?wifi,mobile,japan",
+    image: '/images/services/mobile-internet.png',
     price: 500,
     priceType: "per day",
     currency: "JPY",
