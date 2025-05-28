@@ -15,7 +15,6 @@ import { useAppContext } from '../context/AppContext';
 function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, saveBooking }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [participants, setParticipants] = useState({ adults: 2, children: 0 });
   const [contactInfo, setContactInfo] = useState({
     firstName: '',
@@ -32,16 +31,16 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
     saveCard: false,
     acceptTerms: false
   });
-  
+
   // Получаем функции конвертации валют из контекста
   const { convertPrice, formatPrice, currentCurrency } = useAppContext();
-  
+
   // Определяем, что бронируем - тур или услугу
   const selectedTour = tour;
   const selectedService = service;
   const isBookingTour = !!selectedTour;
   const isBookingService = !!selectedService;
-  
+
   // Если ни тур, ни услуга не выбраны, используем временный тур
   const defaultTour = {
     id: 1,
@@ -49,13 +48,14 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
     image: 'https://source.unsplash.com/featured/?tokyo,japan',
     price: 2500,
     duration: 7,
-    groupSize: 12,
+    groupSizeMin: 8,
+    groupSizeMax: 12,
     rating: 4.9,
     reviewCount: 28
   };
-  
+
   const bookingItem = selectedTour || selectedService || defaultTour;
-  
+
   // Переводы
   const translations = {
     ru: {
@@ -68,7 +68,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
         contact: 'Контакты'
       },
       bookingProcess: 'Процесс бронирования',
-      selectDate: 'Выберите дату',
+      tourSelection: 'Выбор тура',
       participants: 'Участники',
       contactDetails: 'Контактные данные',
       payment: 'Оплата',
@@ -85,12 +85,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       included: 'Включено',
       excluded: 'Не включено',
       bookNow: 'Забронировать сейчас',
-      availableDates: 'Доступные даты',
-      upcomingDepartures: 'Ближайшие отправления',
-      freePlaces: 'свободных мест',
-      pricePerPerson: 'Цена за человека',
-      from: 'от',
-      selectDateButton: 'Выбрать эту дату',
       participantsInfo: 'Информация об участниках',
       adults: 'Взрослые',
       children: 'Дети',
@@ -112,8 +106,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       bookingSummary: 'Сводка бронирования',
       tourName: 'Название тура',
       serviceName: 'Название услуги',
-      departureDate: 'Дата отправления',
-      serviceDate: 'Дата услуги',
       numberOfParticipants: 'Количество участников',
       totalPrice: 'Общая стоимость',
       subtotal: 'Подытог',
@@ -147,7 +139,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       modifySelection: 'Изменить выбор',
       continueToPayment: 'Продолжить к оплате',
       yourBooking: 'Ваше бронирование',
-      price: 'Цена'
+      price: 'Цена',
+      selectedOptions: 'Выбранные опции',
+      basePrice: 'Базовая цена'
     },
     en: {
       menu: {
@@ -159,7 +153,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
         contact: 'Contact'
       },
       bookingProcess: 'Booking Process',
-      selectDate: 'Select Date',
+      tourSelection: 'Tour Selection',
       participants: 'Participants',
       contactDetails: 'Contact Details',
       payment: 'Payment',
@@ -176,12 +170,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       included: 'Included',
       excluded: 'Not Included',
       bookNow: 'Book Now',
-      availableDates: 'Available Dates',
-      upcomingDepartures: 'Upcoming Departures',
-      freePlaces: 'free places',
-      pricePerPerson: 'Price per person',
-      from: 'from',
-      selectDateButton: 'Select This Date',
       participantsInfo: 'Participants Information',
       adults: 'Adults',
       children: 'Children',
@@ -203,8 +191,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       bookingSummary: 'Booking Summary',
       tourName: 'Tour Name',
       serviceName: 'Service Name',
-      departureDate: 'Departure Date',
-      serviceDate: 'Service Date',
       numberOfParticipants: 'Number of Participants',
       totalPrice: 'Total Price',
       subtotal: 'Subtotal',
@@ -238,7 +224,9 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       modifySelection: 'Modify Selection',
       continueToPayment: 'Continue to Payment',
       yourBooking: 'Your Booking',
-      price: 'Price'
+      price: 'Price',
+      selectedOptions: 'Selected Options',
+      basePrice: 'Base Price'
     },
     ja: {
       menu: {
@@ -250,7 +238,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
         contact: 'お問い合わせ'
       },
       bookingProcess: '予約プロセス',
-      selectDate: '日付を選択',
+      tourSelection: 'ツアー選択',
       participants: '参加者',
       contactDetails: '連絡先',
       payment: '支払い',
@@ -267,12 +255,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       included: '含まれるもの',
       excluded: '含まれないもの',
       bookNow: '今すぐ予約',
-      availableDates: '利用可能な日程',
-      upcomingDepartures: '今後の出発日',
-      freePlaces: '空き席',
-      pricePerPerson: '一人あたりの料金',
-      from: 'から',
-      selectDateButton: 'この日程を選択',
       participantsInfo: '参加者情報',
       adults: '大人',
       children: '子供',
@@ -294,8 +276,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       bookingSummary: '予約概要',
       tourName: 'ツアー名',
       serviceName: 'サービス名',
-      departureDate: '出発日',
-      serviceDate: 'サービス日',
       numberOfParticipants: '参加者数',
       totalPrice: '合計金額',
       subtotal: '小計',
@@ -307,7 +287,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       breakfasts: '朝食',
       entranceFees: '入場料',
       guide: 'ガイド',
-      activities: 'アクティビティ',  
+      activities: 'アクティビティ',
       flights: '航空券',
       otherMeals: 'その他の食事',
       personalExpenses: '個人的な支出',
@@ -329,33 +309,26 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       modifySelection: '選択を変更',
       continueToPayment: '支払いに進む',
       yourBooking: 'ご予約',
-      price: '価格'
+      price: '価格',
+      selectedOptions: '選択したオプション',
+      basePrice: '基本料金'
     }
   };
 
   const t = translations[currentLang];
-  
-  // Примерные доступные даты с конвертацией цен
-  const dates = [
-    { id: 1, date: '2025-05-15', availablePlaces: 8, price: bookingItem.price || 2500 },
-    { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round((bookingItem.price || 2500) * 1.08) },
-    { id: 3, date: '2025-06-05', availablePlaces: 10, price: Math.round((bookingItem.price || 2500) * 0.92) },
-    { id: 4, date: '2025-06-12', availablePlaces: 2, price: Math.round((bookingItem.price || 2500) * 1.12) },
-    { id: 5, date: '2025-06-19', availablePlaces: 7, price: bookingItem.price || 2500 },
-  ];
-  
+
   // Примерные включенные и исключенные пункты
-  const included = isBookingTour ? 
+  const included = isBookingTour ?
     ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'] :
     ['guide', 'activities', 'transportation'];
-    
+
   const excluded = isBookingTour ?
     ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'] :
     ['accommodation', 'flights', 'personalExpenses'];
-  
+
   // Обработчики
   const handleNextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
     } else {
@@ -363,7 +336,6 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       const bookingData = {
         tour: isBookingTour ? selectedTour : null,
         service: isBookingService ? selectedService : null,
-        date: selectedDate,
         participants,
         contactInfo,
         paymentInfo,
@@ -389,7 +361,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
       }
     }
   };
-  
+
   // Валидация данных
   const validateContactInfo = () => {
     const errors = {};
@@ -400,7 +372,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
     if (!contactInfo.phone) errors.phone = t.requiredField;
     return errors;
   };
-  
+
   const validatePaymentInfo = () => {
     const errors = {};
     if (!paymentInfo.cardNumber) errors.cardNumber = t.requiredField;
@@ -413,64 +385,51 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
     if (!paymentInfo.acceptTerms) errors.acceptTerms = t.termsRequired;
     return errors;
   };
-  
+
   // Функция для проверки, можно ли перейти на следующий шаг
   const canProceed = () => {
-    if (currentStep === 1 && !selectedDate) return false;
-    if (currentStep === 3) {
+    if (currentStep === 2) {
       const errors = validateContactInfo();
       return Object.keys(errors).length === 0;
     }
-    if (currentStep === 4) {
+    if (currentStep === 3) {
       const errors = validatePaymentInfo();
       return Object.keys(errors).length === 0;
     }
     return true;
   };
-  
+
   // Расчет общей стоимости с конвертацией валют
   const calculateTotal = () => {
-    if (!selectedDate) return { subtotal: 0, tax: 0, total: 0 };
-    
-    let basePrice;
-    if (isBookingService && selectedService.totalPrice) {
-      // Для услуг используем уже рассчитанную цену
-      basePrice = selectedService.totalPrice;
-    } else {
-      // Для туров рассчитываем базовую цену
-      const pricePerPerson = selectedDate.price;
-      basePrice = pricePerPerson * (participants.adults + (participants.children * 0.7));
+    let basePrice = bookingItem.price || 2500;
+
+    // Если есть выбранные опции (из детальной страницы тура)
+    if (bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0) {
+      const optionsPrice = bookingItem.selectedOptions.reduce((sum, option) => sum + option.price, 0);
+      basePrice += optionsPrice;
     }
-    
+
+    // Рассчитываем стоимость для участников
+    const totalParticipants = participants.adults + (participants.children * 0.7);
+    const totalPrice = basePrice * totalParticipants;
+
     // Конвертируем цену в выбранную валюту
-    const convertedPrice = convertPrice(basePrice, isBookingService ? 'JPY' : 'USD', currentCurrency);
+    const convertedPrice = convertPrice(totalPrice, isBookingService ? 'JPY' : 'USD', currentCurrency);
     const tax = Math.round(convertedPrice * 0.1);
-    
+
     return {
       subtotal: convertedPrice,
       tax,
       total: convertedPrice + tax
     };
   };
-  
-  // Форматирование даты
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(
-      currentLang === 'ru' ? 'ru-RU' : 
-      currentLang === 'ja' ? 'ja-JP' : 
-      'en-US', 
-      { day: 'numeric', month: 'long', year: 'numeric' }
-    );
-  };
-  
+
   // Обработчики изменения полей
   const handleContactInfoChange = (e) => {
     const { name, value } = e.target;
     setContactInfo(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handlePaymentInfoChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
@@ -490,181 +449,187 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
           <span className="mx-2 text-gray-400">/</span>
           <span className="text-gray-700">{t.bookingTitle}</span>
         </div>
-        
+
         {/* Booking Process Steps */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">{t.bookingProcess}</h1>
           <div className="flex flex-wrap justify-between items-center">
             <div className={`flex-1 text-center ${currentStep >= 1 ? 'text-pink-500' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full ${currentStep >= 1 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>1</div>
-              <div>{t.selectDate}</div>
+              <div>{t.tourSelection}</div>
             </div>
             <div className="w-full sm:w-auto">
               <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
             </div>
             <div className={`flex-1 text-center ${currentStep >= 2 ? 'text-pink-500' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full ${currentStep >= 2 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>2</div>
-              <div>{t.participants}</div>
+              <div>{t.contactDetails}</div>
             </div>
             <div className="w-full sm:w-auto">
               <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
             </div>
             <div className={`flex-1 text-center ${currentStep >= 3 ? 'text-pink-500' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full ${currentStep >= 3 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>3</div>
-              <div>{t.contactDetails}</div>
-            </div>
-            <div className="w-full sm:w-auto">
-              <div className="hidden sm:block h-1 w-12 bg-gray-300 mx-2"></div>
-            </div>
-            <div className={`flex-1 text-center ${currentStep >= 4 ? 'text-pink-500' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full ${currentStep >= 4 ? 'bg-pink-500' : 'bg-gray-300'} text-white inline-flex items-center justify-center mb-2`}>4</div>
               <div>{t.payment}</div>
             </div>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              {/* Step 1: Select Date */}
+              {/* Step 1: Tour/Service Selection (Review) */}
               {currentStep === 1 && (
                 <>
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.availableDates}</h2>
-                  <div className="mb-6">
-                    <h3 className="font-bold text-gray-700 mb-2">{t.upcomingDepartures}</h3>
-                    <div className="space-y-4">
-                      {dates.map((date) => {
-                        const convertedPrice = convertPrice(date.price, isBookingService ? 'JPY' : 'USD', currentCurrency);
-                        const formattedPrice = formatPrice(convertedPrice, currentCurrency);
-                        
-                        return (
-                          <div 
-                            key={date.id} 
-                            className={`border ${selectedDate && selectedDate.id === date.id ? 'border-pink-500' : 'border-gray-200'} rounded-lg p-4 hover:border-pink-500 transition duration-300 cursor-pointer`}
-                            onClick={() => setSelectedDate(date)}
-                          >
-                            <div className="flex flex-wrap justify-between items-center">
-                              <div className="mr-4">
-                                <div className="font-bold text-gray-800">{formatDate(date.date)}</div>
-                                <div className="text-green-600">{date.availablePlaces} {t.freePlaces}</div>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-gray-600">{t.pricePerPerson}</div>
-                                <div className="font-bold text-pink-500 text-xl">{formattedPrice}</div>
-                              </div>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">
+                    {isBookingTour ? t.youSelected : t.serviceSelected}
+                  </h2>
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="md:w-1/3">
+                      <img
+                        src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'}
+                        alt={bookingItem.title || bookingItem.name}
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="md:w-2/3">
+                      <h3 className="text-lg font-bold mb-2">
+                        {isBookingTour ?
+                          (bookingItem.title?.[currentLang] || bookingItem.title) :
+                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service')
+                        }
+                      </h3>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center text-gray-600">
+                          <Calendar className="w-5 h-5 mr-2 text-pink-500" />
+                          <div>
+                            <div className="text-sm text-gray-500">{t.duration}</div>
+                            <div>
+                              {isBookingTour ?
+                                `${bookingItem.duration || 7} ${t.days}` :
+                                `${bookingItem.duration || '2-3 hours'}`
+                              }
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
-              
-              {/* Step 2: Participants */}
-              {currentStep === 2 && (
-                <>
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">{t.participantsInfo}</h2>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">{t.adults}</label>
-                      <div className="flex">
-                        <button 
-                          className="bg-gray-200 rounded-l px-4 py-2"
-                          onClick={() => setParticipants({...participants, adults: Math.max(1, participants.adults - 1)})}
-                        >
-                          -
-                        </button>
-                        <input 
-                          type="number" 
-                          value={participants.adults}
-                          onChange={(e) => setParticipants({...participants, adults: Math.max(1, parseInt(e.target.value) || 0)})}
-                          className="w-full border-y border-gray-300 text-center py-2"
-                          min="1"
-                        />
-                        <button 
-                          className="bg-gray-200 rounded-r px-4 py-2"
-                          onClick={() => setParticipants({...participants, adults: participants.adults + 1})}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">{t.children}</label>
-                      <div className="flex">
-                        <button 
-                          className="bg-gray-200 rounded-l px-4 py-2"
-                          onClick={() => setParticipants({...participants, children: Math.max(0, participants.children - 1)})}
-                        >
-                          -
-                        </button>
-                        <input 
-                          type="number" 
-                          value={participants.children}
-                          onChange={(e) => setParticipants({...participants, children: Math.max(0, parseInt(e.target.value) || 0)})}
-                          className="w-full border-y border-gray-300 text-center py-2"
-                          min="0"
-                        />
-                        <button 
-                          className="bg-gray-200 rounded-r px-4 py-2"
-                          onClick={() => setParticipants({...participants, children: participants.children + 1})}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {participants.children > 0 && (
-                      <div>
-                        <label className="block text-gray-700 font-medium mb-2">{t.childrenAges}</label>
-                        <div className="text-sm text-gray-500 mb-2">This information helps us prepare appropriate activities and accommodations for children.</div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                          {[...Array(participants.children)].map((_, index) => (
-                            <div key={index}>
-                              <label className="block text-gray-600 text-sm mb-1">Child {index + 1}</label>
-                              <select className="w-full border border-gray-300 rounded-md px-3 py-2">
-                                {[...Array(18)].map((_, age) => (
-                                  <option key={age} value={age}>{age} years</option>
-                                ))}
-                              </select>
+                        </div>
+
+                        <div className="flex items-center text-gray-600">
+                          <Users className="w-5 h-5 mr-2 text-pink-500" />
+                          <div>
+                            <div className="text-sm text-gray-500">{t.groupSize}</div>
+                            <div>
+                              {bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15} {t.people}
                             </div>
-                          ))}
+                          </div>
                         </div>
                       </div>
-                    )}
+
+                      {/* Selected Options Display */}
+                      {bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="font-medium text-gray-800 mb-2">{t.selectedOptions}</h4>
+                          <div className="space-y-2">
+                            {bookingItem.selectedOptions.map((option, index) => {
+                              const convertedOptionPrice = convertPrice(option.price, 'USD', currentCurrency);
+                              const formattedOptionPrice = formatPrice(convertedOptionPrice, currentCurrency);
+
+                              return (
+                                <div key={index} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+                                  <span className="text-gray-700">{option.name[currentLang]}</span>
+                                  <span className="font-medium text-pink-600">+{formattedOptionPrice}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex items-center">
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                        <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
+                        <span className="mx-1 text-gray-400">·</span>
+                        <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-medium text-gray-800 mb-2">{t.participants}</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">{t.adults}</label>
+                        <div className="flex">
+                          <button
+                            className="bg-gray-200 rounded-l px-4 py-2"
+                            onClick={() => setParticipants({...participants, adults: Math.max(1, participants.adults - 1)})}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            value={participants.adults}
+                            onChange={(e) => setParticipants({...participants, adults: Math.max(1, parseInt(e.target.value) || 0)})}
+                            className="w-full border-y border-gray-300 text-center py-2"
+                            min="1"
+                          />
+                          <button
+                            className="bg-gray-200 rounded-r px-4 py-2"
+                            onClick={() => setParticipants({...participants, adults: participants.adults + 1})}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2">{t.children}</label>
+                        <div className="flex">
+                          <button
+                            className="bg-gray-200 rounded-l px-4 py-2"
+                            onClick={() => setParticipants({...participants, children: Math.max(0, participants.children - 1)})}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            value={participants.children}
+                            onChange={(e) => setParticipants({...participants, children: Math.max(0, parseInt(e.target.value) || 0)})}
+                            className="w-full border-y border-gray-300 text-center py-2"
+                            min="0"
+                          />
+                          <button
+                            className="bg-gray-200 rounded-r px-4 py-2"
+                            onClick={() => setParticipants({...participants, children: participants.children + 1})}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
-              
-              {/* Step 3: Contact Information */}
-              {currentStep === 3 && (
+
+              {/* Step 2: Contact Information */}
+              {currentStep === 2 && (
                 <>
                   <h2 className="text-xl font-bold text-gray-800 mb-4">{t.contactDetails}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">{t.firstName} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="firstName"
                         value={contactInfo.firstName}
-                        onChange={handleContactInfoChange}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                        required
-                      />
-                      {validateContactInfo().firstName && (
-                        <p className="text-red-500 text-sm mt-1">{validateContactInfo().firstName}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-700 font-medium mb-2">{t.lastName} *</label>
-                      <input 
-                        type="text" 
-                        name="lastName"
-                        value={contactInfo.lastName}
                         onChange={handleContactInfoChange}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
                         required
@@ -673,11 +638,11 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <p className="text-red-500 text-sm mt-1">{validateContactInfo().lastName}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">{t.email} *</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         name="email"
                         value={contactInfo.email}
                         onChange={handleContactInfoChange}
@@ -688,11 +653,11 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <p className="text-red-500 text-sm mt-1">{validateContactInfo().email}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">{t.phone} *</label>
-                      <input 
-                        type="tel" 
+                      <input
+                        type="tel"
                         name="phone"
                         value={contactInfo.phone}
                         onChange={handleContactInfoChange}
@@ -703,10 +668,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <p className="text-red-500 text-sm mt-1">{validateContactInfo().phone}</p>
                       )}
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <label className="block text-gray-700 font-medium mb-2">{t.specialRequests}</label>
-                      <textarea 
+                      <textarea
                         name="specialRequests"
                         value={contactInfo.specialRequests}
                         onChange={handleContactInfoChange}
@@ -717,16 +682,16 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                   </div>
                 </>
               )}
-              
-              {/* Step 4: Payment */}
-              {currentStep === 4 && (
+
+              {/* Step 3: Payment */}
+              {currentStep === 3 && (
                 <>
                   <h2 className="text-xl font-bold text-gray-800 mb-4">{t.paymentDetails}</h2>
                   <div className="space-y-6">
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">{t.cardNumber} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="cardNumber"
                         value={paymentInfo.cardNumber}
                         onChange={handlePaymentInfoChange}
@@ -738,11 +703,11 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().cardNumber}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-gray-700 font-medium mb-2">{t.cardholderName} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="cardholderName"
                         value={paymentInfo.cardholderName}
                         onChange={handlePaymentInfoChange}
@@ -753,12 +718,12 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().cardholderName}</p>
                       )}
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-gray-700 font-medium mb-2">{t.expiryDate} *</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           name="expiryDate"
                           value={paymentInfo.expiryDate}
                           onChange={handlePaymentInfoChange}
@@ -770,11 +735,11 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                           <p className="text-red-500 text-sm mt-1">{validatePaymentInfo().expiryDate}</p>
                         )}
                       </div>
-                      
+
                       <div>
                         <label className="block text-gray-700 font-medium mb-2">{t.cvv} *</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           name="cvv"
                           value={paymentInfo.cvv}
                           onChange={handlePaymentInfoChange}
@@ -786,10 +751,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         )}
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="flex items-center">
-                        <input 
+                        <input
                           type="checkbox"
                           name="saveCard"
                           checked={paymentInfo.saveCard}
@@ -799,10 +764,10 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         <span className="text-gray-700">{t.saveCard}</span>
                       </label>
                     </div>
-                    
+
                     <div>
                       <label className="flex items-center">
-                        <input 
+                        <input
                           type="checkbox"
                           name="acceptTerms"
                           checked={paymentInfo.acceptTerms}
@@ -819,51 +784,51 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                   </div>
                 </>
               )}
-              
+
               <div className="flex justify-between mt-8">
-                <button 
-                  onClick={handlePreviousStep} 
+                <button
+                  onClick={handlePreviousStep}
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   {t.previous}
                 </button>
-                <button 
-                  onClick={handleNextStep} 
+                <button
+                  onClick={handleNextStep}
                   className={`flex items-center px-6 py-2 rounded-md bg-pink-500 hover:bg-pink-600 text-white ${!canProceed() ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={!canProceed()}
                 >
-                  {currentStep === 4 ? t.payNow : t.next}
-                  {currentStep < 4 && <ArrowRight className="w-4 h-4 ml-2" />}
+                  {currentStep === 3 ? t.payNow : t.next}
+                  {currentStep < 3 && <ArrowRight className="w-4 h-4 ml-2" />}
                 </button>
               </div>
             </div>
           </div>
-          
+
           {/* Sidebar - Booking Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-bold text-gray-800 mb-4">{t.yourBooking}</h2>
-              
+
               <div className="mb-4">
-                <img 
-                  src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'} 
-                  alt={bookingItem.title || bookingItem.name} 
-                  className="w-full h-40 object-cover rounded-lg mb-4" 
+                <img
+                  src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'}
+                  alt={bookingItem.title || bookingItem.name}
+                  className="w-full h-40 object-cover rounded-lg mb-4"
                 />
                 <h3 className="text-lg font-bold mb-2">
-                  {isBookingTour ? 
-                    (bookingItem.title?.[currentLang] || bookingItem.title) : 
+                  {isBookingTour ?
+                    (bookingItem.title?.[currentLang] || bookingItem.title) :
                     (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service')
                   }
                 </h3>
-                
+
                 <div className="flex items-center mb-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`} 
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
@@ -871,7 +836,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                   <span className="mx-1 text-gray-400">·</span>
                   <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
                 </div>
-                
+
                 <div className="flex justify-between mb-1">
                   {isBookingTour ? (
                     <>
@@ -881,7 +846,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                       </div>
                       <div className="flex items-center text-gray-600">
                         <Users className="w-4 h-4 mr-1" />
-                        <span>{t.upTo} {bookingItem.groupSize}</span>
+                        <span>{bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15}</span>
                       </div>
                     </>
                   ) : (
@@ -891,16 +856,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                     </div>
                   )}
                 </div>
-                
-                {selectedDate && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="font-medium text-gray-700">
-                      {isBookingTour ? t.departureDate : t.serviceDate}
-                    </p>
-                    <p className="text-gray-900">{formatDate(selectedDate.date)}</p>
-                  </div>
-                )}
-                
+
                 {participants && (currentStep > 1) && (
                   <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                     <p className="font-medium text-gray-700">{t.participants}</p>
@@ -908,30 +864,49 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                   </div>
                 )}
               </div>
-              
+
               {/* Pricing breakdown */}
-              {selectedDate && (
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <h3 className="font-bold text-gray-800 mb-2">{t.bookingSummary}</h3>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t.subtotal}</span>
-                      <span className="font-medium">{formatPrice(calculateTotal().subtotal, currentCurrency)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t.tax} (10%)</span>
-                      <span className="font-medium">{formatPrice(calculateTotal().tax, currentCurrency)}</span>
-                    </div>
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <h3 className="font-bold text-gray-800 mb-2">{t.bookingSummary}</h3>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t.basePrice}</span>
+                    <span className="font-medium">{formatPrice(convertPrice(bookingItem.price, isBookingService ? 'JPY' : 'USD', currentCurrency), currentCurrency)}</span>
                   </div>
-                  
-                  <div className="flex justify-between border-t border-gray-200 pt-2 font-bold">
-                    <span>{t.total}</span>
-                    <span className="text-pink-600">{formatPrice(calculateTotal().total, currentCurrency)}</span>
+
+                  {bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0 && (
+                    <>
+                      {bookingItem.selectedOptions.map((option, index) => {
+                        const convertedOptionPrice = convertPrice(option.price, 'USD', currentCurrency);
+                        const formattedOptionPrice = formatPrice(convertedOptionPrice, currentCurrency);
+
+                        return (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span className="text-gray-600">{option.name[currentLang]}</span>
+                            <span className="font-medium">+{formattedOptionPrice}</span>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t.subtotal}</span>
+                    <span className="font-medium">{formatPrice(calculateTotal().subtotal, currentCurrency)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t.tax} (10%)</span>
+                    <span className="font-medium">{formatPrice(calculateTotal().tax, currentCurrency)}</span>
                   </div>
                 </div>
-              )}
-              
+
+                <div className="flex justify-between border-t border-gray-200 pt-2 font-bold">
+                  <span>{t.total}</span>
+                  <span className="text-pink-600">{formatPrice(calculateTotal().total, currentCurrency)}</span>
+                </div>
+              </div>
+
               <div className="mt-6">
                 <h3 className="font-bold text-gray-800 mb-2">{t.included}</h3>
                 <ul className="space-y-1 mb-4">
@@ -942,7 +917,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                     </li>
                   ))}
                 </ul>
-                
+
                 <h3 className="font-bold text-gray-800 mb-2">{t.excluded}</h3>
                 <ul className="space-y-1">
                   {excluded.map((item, index) => (

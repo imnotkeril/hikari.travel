@@ -21,7 +21,7 @@ import {
   Minus,
   ArrowLeft
 } from 'lucide-react';
-import { toursData } from '../data/toursData';
+import { toursData, tourTypes } from '../data/toursData';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../components/ReviewsSection';
 import { useAppContext } from '../context/AppContext';
@@ -53,10 +53,11 @@ const localizeDeep = (obj, currentLang) => {
 };
 
 function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, tourId }) {
-  const [selectedDate, setSelectedDate] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedTour, setSelectedTour] = useState(null);
   const [relatedTours, setRelatedTours] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [showFullItinerary, setShowFullItinerary] = useState(false);
   const { convertPrice, formatPrice, currentCurrency } = useAppContext();
 
   // Эффект для загрузки данных о туре
@@ -77,7 +78,10 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
     // Находим похожие туры (того же типа или категории)
     if (tour) {
       const similar = toursData
-        .filter(t => t.id !== tour.id && (t.type === tour.type || t.category === tour.category))
+        .filter(t => t.id !== tour.id && (
+          (t.types && tour.types && t.types.some(type => tour.types.includes(type))) ||
+          t.category === tour.category
+        ))
         .slice(0, 3);
       setRelatedTours(similar);
     }
@@ -112,14 +116,13 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       from: 'от',
       perPerson: 'за человека',
       startingFrom: 'Начало от',
-      selectDate: 'Выберите дату',
-      availableDates: 'Доступные даты',
       customerReviews: 'Отзывы клиентов',
       reviewsCount: 'отзывов',
       writeReview: 'Написать отзыв',
       tourHighlights: 'Особенности тура',
       day: 'День',
       tourIncludes: 'В тур включено',
+      additionalOptions: 'Дополнительные опции',
       accommodation: 'Проживание',
       meals: 'Питание',
       transportation: 'Транспорт',
@@ -138,9 +141,22 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       showMore: 'Показать больше',
       readMore: 'Читать далее',
       readLess: 'Свернуть',
-      freePlaces: 'свободных мест',
       aboutTour: 'О туре',
-      price: 'Цена'
+      price: 'Цена',
+      totalPrice: 'Общая стоимость',
+      basePrice: 'Базовая цена',
+      options: 'Опции',
+      selectOptions: 'Выберите дополнительные опции',
+      physicalLevel: 'Физическая подготовка',
+      bestSeasons: 'Лучшие сезоны',
+      languages: 'Языки гидов',
+      showMore: 'Показать больше',
+      showLess: 'Показать меньше',
+      climateFeatures: 'Климатические особенности',
+      packingList: 'Что взять с собой',
+      tourDuration: 'Продолжительность',
+      groupSizeInfo: 'Размер группы',
+      destinations: 'направлений'
     },
     en: {
       backToTours: 'Back to Tours',
@@ -160,14 +176,13 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       from: 'from',
       perPerson: 'per person',
       startingFrom: 'Starting from',
-      selectDate: 'Select Date',
-      availableDates: 'Available Dates',
       customerReviews: 'Customer Reviews',
       reviewsCount: 'reviews',
       writeReview: 'Write a Review',
       tourHighlights: 'Tour Highlights',
       day: 'Day',
       tourIncludes: 'Tour Includes',
+      additionalOptions: 'Additional Options',
       accommodation: 'Accommodation',
       meals: 'Meals',
       transportation: 'Transportation',
@@ -186,9 +201,22 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       showMore: 'Show More',
       readMore: 'Read More',
       readLess: 'Read Less',
-      freePlaces: 'free places',
       aboutTour: 'About Tour',
-      price: 'Price'
+      price: 'Price',
+      totalPrice: 'Total Price',
+      basePrice: 'Base Price',
+      options: 'Options',
+      selectOptions: 'Select additional options',
+      physicalLevel: 'Physical Level',
+      bestSeasons: 'Best Seasons',
+      languages: 'Guide Languages',
+      showMore: 'Show More',
+      showLess: 'Show Less',
+      climateFeatures: 'Climate Features',
+      packingList: 'What to Bring',
+      tourDuration: 'Duration',
+      groupSizeInfo: 'Group Size',
+      destinations: 'destinations'
     },
     ja: {
       backToTours: 'ツアー一覧に戻る',
@@ -208,14 +236,13 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       from: 'から',
       perPerson: '1人あたり',
       startingFrom: '開始価格',
-      selectDate: '日付を選択',
-      availableDates: '利用可能な日付',
       customerReviews: 'カスタマーレビュー',
       reviewsCount: 'レビュー',
       writeReview: 'レビューを書く',
       tourHighlights: 'ツアーのハイライト',
       day: '日目',
       tourIncludes: 'ツアーに含まれるもの',
+      additionalOptions: '追加オプション',
       accommodation: '宿泊施設',
       meals: '食事',
       transportation: '交通機関',
@@ -234,47 +261,67 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       showMore: 'もっと見る',
       readMore: '続きを読む',
       readLess: '折りたたむ',
-      freePlaces: '空き席',
       aboutTour: 'ツアーについて',
-      price: '価格'
+      price: '価格',
+      totalPrice: '総額',
+      basePrice: '基本料金',
+      options: 'オプション',
+      selectOptions: '追加オプションを選択',
+      physicalLevel: '体力レベル',
+      bestSeasons: 'ベストシーズン',
+      languages: 'ガイドの言語',
+      showMore: 'もっと見る',
+      showLess: '少なく表示',
+      climateFeatures: '気候の特徴',
+      packingList: '持参するもの',
+      tourDuration: '期間',
+      groupSizeInfo: 'グループサイズ',
+      destinations: '目的地'
     }
   };
 
   const t = translations[currentLang];
 
-  // Примерные доступные даты с конвертацией цен
-  const dates = [
-    { id: 1, date: '2025-05-15', availablePlaces: 8, price: selectedTour.price },
-    { id: 2, date: '2025-05-22', availablePlaces: 5, price: Math.round(selectedTour.price * 1.08) },
-    { id: 3, date: '2025-06-05', availablePlaces: 10, price: Math.round(selectedTour.price * 0.92) },
-    { id: 4, date: '2025-06-12', availablePlaces: 2, price: Math.round(selectedTour.price * 1.12) },
-    { id: 5, date: '2025-06-19', availablePlaces: 7, price: selectedTour.price },
-  ];
+  // Получаем названия типов для отображения
+  const getTypeNames = () => {
+    if (!selectedTour.types || !Array.isArray(selectedTour.types)) return [];
 
-  // Примерные включенные и исключенные пункты
-  const included = ['accommodation', 'transportation', 'guide', 'activities', 'meals'];
-  const excluded = ['flights', 'personalExpenses', 'travelInsurance'];
-
-  // Форматирование даты
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(
-      currentLang === 'ru' ? 'ru-RU' :
-      currentLang === 'ja' ? 'ja-JP' :
-      'en-US',
-      { day: 'numeric', month: 'long', year: 'numeric' }
-    );
+    return selectedTour.types.map(typeId => {
+      const typeObj = tourTypes.find(t => t.id === typeId);
+      return typeObj ? typeObj.title[currentLang] : typeId;
+    });
   };
 
   // Конвертируем основную цену тура
   const convertedPrice = convertPrice(selectedTour.price, 'USD', currentCurrency);
   const formattedPrice = formatPrice(convertedPrice, currentCurrency);
 
+  // Расчет общей стоимости с опциями
+  const calculateTotalPrice = () => {
+    let total = selectedTour.price;
+    selectedOptions.forEach(option => {
+      total += option.price;
+    });
+    const convertedTotal = convertPrice(total, 'USD', currentCurrency);
+    return formatPrice(convertedTotal, currentCurrency);
+  };
+
+  // Обработчик выбора дополнительных опций
+  const handleOptionToggle = (option) => {
+    setSelectedOptions(prev => {
+      const exists = prev.find(o => o.name[currentLang] === option.name[currentLang]);
+      if (exists) {
+        return prev.filter(o => o.name[currentLang] !== option.name[currentLang]);
+      } else {
+        return [...prev, option];
+      }
+    });
+  };
+
 return (
   <div className="min-h-screen bg-white">
     {/* Tour Details Content */}
-    <section className="relative py-16 bg-cover bg-center" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/tours/${selectedTour.id}.png)` }}>
+    <section className="relative py-16 bg-cover bg-center" style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${selectedTour.image})` }}>
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
@@ -289,14 +336,19 @@ return (
           </div>
           <div className="flex items-center mt-4 md:mt-0">
             <div className="flex items-center gap-2">
-              {selectedTour.tags && selectedTour.tags[currentLang] && (
-                <div className="flex flex-wrap gap-4">
-                  {selectedTour.tags[currentLang].map((tag, index) => (
+              {selectedTour.popular && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-pink-500 text-white text-sm font-medium">
+                  Популярное
+                </span>
+              )}
+              {getTypeNames().length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {getTypeNames().map((typeName, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-3 py-1 rounded-full bg-white bg-opacity-20 text-white text-sm"
                     >
-                      #{tag}
+                      {typeName}
                     </span>
                   ))}
                 </div>
@@ -434,7 +486,9 @@ return (
             <section id="itinerary" className={`mb-12 ${activeTab !== 'itinerary' ? 'hidden md:block' : ''}`}>
               <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.itinerary}</h2>
               <div className="space-y-6">
-                {selectedTour.itinerary && selectedTour.itinerary.map((day) => (
+                {selectedTour.itinerary && selectedTour.itinerary
+                  .slice(0, showFullItinerary ? selectedTour.itinerary.length : 7)
+                  .map((day) => (
                   <div key={day.day} className="border-l-4 border-pink-500 pl-4">
                     <h3 className="text-xl font-bold text-gray-800 mb-2">
                       {t.day} {day.day}: {day.title[currentLang]}
@@ -442,6 +496,21 @@ return (
                     <p className="text-gray-700">{day.description[currentLang]}</p>
                   </div>
                 ))}
+
+                {/* Кнопка "Показать больше дней" если маршрут длинный */}
+                {selectedTour.itinerary && selectedTour.itinerary.length > 7 && (
+                  <div className="flex justify-center mt-6">
+                    <button
+                      onClick={() => setShowFullItinerary(!showFullItinerary)}
+                      className="px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white font-medium rounded-md"
+                    >
+                      {showFullItinerary
+                        ? `${t.showLess} (${selectedTour.itinerary.length - 7} ${t.days})`
+                        : `${t.showMore} (${selectedTour.itinerary.length - 7} ${t.days})`
+                      }
+                    </button>
+                  </div>
+                )}
               </div>
             </section>
 
@@ -452,10 +521,10 @@ return (
                 <div>
                   <h3 className="text-xl font-bold text-gray-800 mb-4">{t.included}</h3>
                   <ul className="space-y-2">
-                    {included.map((item, index) => (
+                    {selectedTour.included[currentLang].map((item, index) => (
                       <li key={index} className="flex items-start">
                         <span className="text-green-500 font-bold mr-2">✓</span>
-                        <span>{t[item]}</span>
+                        <span>{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -463,15 +532,48 @@ return (
                 <div>
                   <h3 className="text-xl font-bold text-gray-800 mb-4">{t.excludes}</h3>
                   <ul className="space-y-2">
-                    {excluded.map((item, index) => (
+                    {selectedTour.excluded[currentLang].map((item, index) => (
                       <li key={index} className="flex items-start">
                         <span className="text-red-500 font-bold mr-2">✗</span>
-                        <span>{t[item]}</span>
+                        <span>{item}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
+
+              {/* Additional Options */}
+              {selectedTour.additionalOptions && selectedTour.additionalOptions.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">{t.additionalOptions}</h3>
+                  <div className="space-y-3">
+                    {selectedTour.additionalOptions.map((option, index) => {
+                      const convertedOptionPrice = convertPrice(option.price, 'USD', currentCurrency);
+                      const formattedOptionPrice = formatPrice(convertedOptionPrice, currentCurrency);
+
+                      return (
+                        <label key={index} className="flex items-start justify-between cursor-pointer p-4 border rounded-lg hover:bg-gray-50">
+                          <div className="flex items-start">
+                            <input
+                              type="checkbox"
+                              checked={selectedOptions.some(o => o.name[currentLang] === option.name[currentLang])}
+                              onChange={() => handleOptionToggle(option)}
+                              className="mt-1 mr-3 text-pink-500"
+                            />
+                            <div>
+                              <div className="font-medium text-gray-800">{option.name[currentLang]}</div>
+                              <div className="text-sm text-gray-600">{option.description[currentLang]}</div>
+                            </div>
+                          </div>
+                          <div className="text-pink-600 font-bold">
+                            +{formattedOptionPrice}
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* Reviews Section */}
@@ -491,6 +593,66 @@ return (
                 limit={3}
                 showMoreButton={true}
               />
+            </section>
+
+            {/* Practical Info Section */}
+            <section id="practical" className={`mb-12 ${activeTab !== 'practical' ? 'hidden md:block' : ''}`}>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.practical}</h2>
+
+              {selectedTour.practicalInfo && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2">{t.tourDuration}</h4>
+                    <p className="text-gray-600">{selectedTour.practicalInfo.duration[currentLang]}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2">{t.groupSizeInfo}</h4>
+                    <p className="text-gray-600">{selectedTour.practicalInfo.groupSize[currentLang]}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2">{t.physicalLevel}</h4>
+                    <p className="text-gray-600">{selectedTour.practicalInfo.physicalLevel[currentLang]}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2">{t.bestSeasons}</h4>
+                    <p className="text-gray-600">{selectedTour.practicalInfo.bestSeasons[currentLang]}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-2">{t.languages}</h4>
+                    <p className="text-gray-600">{selectedTour.practicalInfo.languages[currentLang]}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Климатические особенности */}
+              {selectedTour.climateInfo && (
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">{t.climateFeatures}</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedTour.climateInfo.map((climate, index) => (
+                      <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                        <h4 className="font-bold text-gray-800 mb-2">{climate.region[currentLang]}</h4>
+                        <p className="text-gray-600">{climate.climate[currentLang]}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Что взять с собой */}
+              {selectedTour.packingList && (
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">{t.packingList}</h3>
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {selectedTour.packingList[currentLang].map((item, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-pink-500 font-bold mr-2">•</span>
+                        <span className="text-gray-600">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </section>
 
             {/* Related Tours */}
@@ -514,7 +676,6 @@ return (
               </div>
             </section>
           </div>
-
 
           {/* Sidebar */}
           <div className="lg:w-1/3">
@@ -541,7 +702,7 @@ return (
                     <Users className="w-5 h-5 mr-2 text-pink-500" />
                     <span>{t.groupSize}</span>
                   </div>
-                  <span className="font-bold">{selectedTour.groupSize} {t.people}</span>
+                  <span className="font-bold">{selectedTour.groupSizeMin || 8}-{selectedTour.groupSizeMax || 15} {t.people}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
@@ -549,50 +710,36 @@ return (
                     <MapPin className="w-5 h-5 mr-2 text-pink-500" />
                     <span>{t.route}</span>
                   </div>
-                  <span className="font-bold">{selectedTour.route.length} destinations</span>
+                  <span className="font-bold">{selectedTour.route[currentLang].length} {t.destinations}</span>
                 </div>
               </div>
 
-              <div className="mb-6">
-                <h3 className="font-bold text-gray-800 mb-2">{t.selectDate}</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {dates.slice(0, 4).map((date, index) => {
-                    const convertedDatePrice = convertPrice(date.price, 'USD', currentCurrency);
-                    const formattedDatePrice = formatPrice(convertedDatePrice, currentCurrency);
-
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedDate(date)}
-                        className={`py-2 px-3 rounded-md text-sm ${
-                          selectedDate === date
-                            ? 'bg-pink-500 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                      >
-                        {formatDate(date.date)}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button className="w-full text-pink-500 hover:text-pink-600 mt-2">
-                  + {dates.length - 4} {t.availableDates}
-                </button>
-              </div>
-
-              {selectedDate && (
+              {/* Selected Options Display */}
+              {selectedOptions.length > 0 && (
                 <div className="border-t border-gray-200 pt-4 mb-4">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">{formatDate(selectedDate.date)}</span>
-                      <span className="text-green-600 text-sm">{selectedDate.availablePlaces} {t.freePlaces}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t.price}:</span>
-                      <span className="font-bold text-pink-500">
-                        {formatPrice(convertPrice(selectedDate.price, 'USD', currentCurrency), currentCurrency)}
-                      </span>
-                    </div>
+                  <h3 className="font-bold text-gray-800 mb-2">{t.options}</h3>
+                  <div className="space-y-2">
+                    {selectedOptions.map((option, index) => {
+                      const convertedOptionPrice = convertPrice(option.price, 'USD', currentCurrency);
+                      const formattedOptionPrice = formatPrice(convertedOptionPrice, currentCurrency);
+
+                      return (
+                        <div key={index} className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">{option.name[currentLang]}</span>
+                          <span className="font-medium text-pink-600">+{formattedOptionPrice}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Total Price */}
+              {selectedOptions.length > 0 && (
+                <div className="border-t border-gray-200 pt-4 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-gray-800">{t.totalPrice}:</span>
+                    <span className="text-2xl font-bold text-pink-600">{calculateTotalPrice()}</span>
                   </div>
                 </div>
               )}
@@ -602,14 +749,11 @@ return (
                   // Используем функцию глубокой локализации для всего объекта тура
                   const localizedTour = localizeDeep(selectedTour, currentLang);
 
-                  // Добавляем информацию о текущем языке
+                  // Добавляем информацию о текущем языке и выбранных опциях
                   localizedTour.currentLang = currentLang;
+                  localizedTour.selectedOptions = selectedOptions;
 
-                  if (selectedDate) {
-                    bookTour({...localizedTour, selectedDate});
-                  } else {
-                    bookTour(localizedTour);
-                  }
+                  bookTour(localizedTour);
                 }}
                 className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded mt-6"
               >

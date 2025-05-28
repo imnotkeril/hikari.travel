@@ -2,6 +2,7 @@
 import React from 'react';
 import { Calendar, Users, MapPin, Star } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { tourTypes } from '../data/toursData';
 
 const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }) => {
   const { convertPrice, formatPrice, currentCurrency } = useAppContext();
@@ -14,12 +15,15 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
   try {
     // Если передается полный объект translations
     t = {
-      days: translations[currentLang].featuredTours.days,
-      people: translations[currentLang].featuredTours.people,
-      bookNow: translations[currentLang].featuredTours.bookNow,
+      days: translations[currentLang].featuredTours?.days || translations[currentLang].days || "days",
+      people: translations[currentLang].featuredTours?.people || translations[currentLang].people || "people",
+      bookNow: translations[currentLang].featuredTours?.bookNow || translations[currentLang].bookNow || "Book Now",
       viewDetails: translations[currentLang].viewDetails || "View Details",
-      reviews: translations[currentLang].testimonials?.title?.toLowerCase() || "reviews",
-      from: translations[currentLang].from || "from"
+      reviews: translations[currentLang].testimonials?.title?.toLowerCase() || translations[currentLang].reviews || "reviews",
+      from: translations[currentLang].from || "from",
+      groupFrom: translations[currentLang].groupFrom || "группа от",
+      groupTo: translations[currentLang].groupTo || "до",
+      popular: translations[currentLang].popular || "Популярное"
     };
   } catch (error) {
     console.log("Translation parsing error:", error);
@@ -30,7 +34,10 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
       bookNow: translations.bookNow || "Book Now",
       viewDetails: translations.viewDetails || "View Details",
       reviews: translations.reviews || "reviews",
-      from: translations.from || "from"
+      from: translations.from || "from",
+      groupFrom: translations.groupFrom || "группа от",
+      groupTo: translations.groupTo || "до",
+      popular: translations.popular || "Популярное"
     };
   }
 
@@ -67,15 +74,29 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
     }
   };
 
-  // Формируем URL изображения точно так же, как в TourDetailsPage
-  const imageUrl = `/images/tours/${tour.id}.png`;
+  // Формируем URL изображения
+  const imageUrl = tour.image || `https://source.unsplash.com/featured/?japan,${tour.id}`;
 
-  const rating = tour.rating || 4.8; // Дефолтное значение
-  const reviewCount = tour.reviewCount || 24; // Дефолтное значение
+  const rating = tour.rating || 4.8;
+  const reviewCount = tour.reviewCount || 24;
 
   // Конвертируем цену в выбранную валюту
   const convertedPrice = convertPrice(tour.price, 'USD', currentCurrency);
   const formattedPrice = formatPrice(convertedPrice, currentCurrency);
+
+  // Получаем названия типов для отображения
+  const getTypeNames = () => {
+    if (!tour.types || !Array.isArray(tour.types)) return [];
+
+    return tour.types.map(typeId => {
+      const typeObj = tourTypes.find(t => t.id === typeId);
+      return typeObj ? typeObj.title[currentLang] : typeId;
+    });
+  };
+
+  const typeNames = getTypeNames();
+
+  console.log('Tour types:', tour.types, 'Type names:', typeNames); // Для отладки
 
   return (
     <div
@@ -90,17 +111,28 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
           {t.from} {formattedPrice}
         </div>
 
-        {/* Отображение тегов */}
-        {tour.tags && tour.tags[currentLang] && (
-          <div className="absolute bottom-4 left-4 flex flex-wrap gap-1">
-            {tour.tags[currentLang].map((tag, index) => (
-              <span
-                key={index}
-                className="bg-pink-500 bg-opacity-80 text-white text-xs px-2 py-1 rounded-full"
-              >
-                #{tag}
-              </span>
-            ))}
+        {/* Популярное слева внизу как было */}
+        {tour.popular && (
+          <div className="absolute bottom-4 left-4">
+            <span className="bg-pink-500 text-white text-xs px-2 py-1 rounded-full">
+              {t.popular}
+            </span>
+          </div>
+        )}
+
+        {/* Типы туров справа внизу */}
+        {typeNames.length > 0 && (
+          <div className="absolute bottom-4 right-4">
+            <div className="flex flex-wrap gap-1 justify-end">
+              {typeNames.map((typeName, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2 py-1 rounded-full bg-white bg-opacity-90 text-gray-700 text-xs"
+                >
+                  {typeName}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -145,11 +177,15 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
             <Calendar className="w-4 h-4 mr-1" />
             <span>{tour.duration} {t.days}</span>
           </div>
+          {/* Показываем размер группы вместо типов */}
           <div className="flex items-center text-gray-600">
             <Users className="w-4 h-4 mr-1" />
-            <span>{tour.groupSize} {t.people}</span>
+            <span className="text-sm">
+              {currentLang === 'ru' ? 'Группа' : currentLang === 'ja' ? 'グループ' : 'Group'} {tour.groupSizeMin || 8}-{tour.groupSizeMax || 15} {t.people}
+            </span>
           </div>
         </div>
+
         <div className="flex space-x-2">
           <button
             onClick={handleBookTour}

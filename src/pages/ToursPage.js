@@ -10,17 +10,17 @@ import {
   MapPin,
   X
 } from 'lucide-react';
-import { toursData, tourCategories, tourTypes, seasons } from '../data/toursData';
+import { toursData, tourCategories, tourTypes } from '../data/toursData';
 import TourCard from '../components/TourCard';
 
 function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeType, setActiveType] = useState('all');
-  const [activeSeason, setActiveSeason] = useState('all');
+  const [showPopularOnly, setShowPopularOnly] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 5000]);
-  const [durationRange, setDurationRange] = useState([1, 14]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [durationRange, setDurationRange] = useState([1, 25]);
   const [sortOption, setSortOption] = useState('recommended');
 
   // Переводы
@@ -48,7 +48,6 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       people: 'человек',
       date: 'Дата',
       location: 'Местоположение',
-      season: 'Сезон',
       applyFilter: 'Применить фильтры',
       resetFilter: 'Сбросить фильтры',
       sortOptions: {
@@ -68,7 +67,9 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       destinations: 'Направления',
       tags: 'Теги',
       route: 'Маршрут',
-      clearFilters: 'Очистить фильтры'
+      clearFilters: 'Очистить фильтры',
+      popularOnly: 'Популярные',
+      showPopular: 'Показать популярные'
     },
     en: {
       menu: {
@@ -93,7 +94,6 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       people: 'people',
       date: 'Date',
       location: 'Location',
-      season: 'Season',
       applyFilter: 'Apply Filters',
       resetFilter: 'Reset Filters',
       sortOptions: {
@@ -113,7 +113,9 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       destinations: 'Destinations',
       tags: 'Tags',
       route: 'Route',
-      clearFilters: 'Clear Filters'
+      clearFilters: 'Clear Filters',
+      popularOnly: 'Popular',
+      showPopular: 'Show popular'
     },
     ja: {
       menu: {
@@ -138,7 +140,6 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       people: '人',
       date: '日付',
       location: '場所',
-      season: '季節',
       applyFilter: 'フィルターを適用',
       resetFilter: 'フィルターをリセット',
       sortOptions: {
@@ -158,7 +159,9 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       destinations: '目的地',
       tags: 'タグ',
       route: 'ルート',
-      clearFilters: 'フィルターをクリア'
+      clearFilters: 'フィルターをクリア',
+      popularOnly: '人気',
+      showPopular: '人気を表示'
     }
   };
 
@@ -176,11 +179,11 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       case 'durationDesc':
         return [...tours].sort((a, b) => b.duration - a.duration);
       case 'popularityDesc':
-        // Сортировка по популярности (используем теги "популярное" в качестве показателя)
+        // Сортировка по популярности (используем поле popular)
         return [...tours].sort((a, b) => {
-          const aIsPopular = a.tags && a.tags.includes('популярное') ? 1 : 0;
-          const bIsPopular = b.tags && b.tags.includes('популярное') ? 1 : 0;
-          return bIsPopular - aIsPopular;
+          if (a.popular && !b.popular) return -1;
+          if (!a.popular && b.popular) return 1;
+          return 0;
         });
       default: // 'recommended'
         return tours;
@@ -191,6 +194,11 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
   const filteredTours = useMemo(() => {
     let filtered = [...toursData];
 
+    // Фильтр только популярные
+    if (showPopularOnly) {
+      filtered = filtered.filter(tour => tour.popular === true);
+    }
+
     // Фильтр по категории
     if (activeCategory !== 'all') {
       filtered = filtered.filter(tour => tour.category === activeCategory);
@@ -198,12 +206,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
     // Фильтр по типу
     if (activeType !== 'all') {
-      filtered = filtered.filter(tour => tour.type === activeType);
-    }
-
-    // Фильтр по сезону
-    if (activeSeason !== 'all') {
-      filtered = filtered.filter(tour => tour.seasons.includes(activeSeason));
+      filtered = filtered.filter(tour => tour.types && tour.types.includes(activeType));
     }
 
     // Фильтр по цене
@@ -220,14 +223,14 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         tour.description[currentLang].toLowerCase().includes(term) ||
         (tour.route[currentLang] && tour.route[currentLang].some(location =>
           location.toLowerCase().includes(term))) ||
-        (tour.tags[currentLang] && tour.tags[currentLang].some(tag =>
-          tag.toLowerCase().includes(term)))
+        (tour.types && tour.types.some(type =>
+          type.toLowerCase().includes(term)))
       );
     }
 
     // Сортировка
     return sortTours(filtered, sortOption);
-  }, [activeCategory, activeType, activeSeason, priceRange, durationRange, searchTerm, sortOption, currentLang]);
+  }, [activeCategory, activeType, showPopularOnly, priceRange, durationRange, searchTerm, sortOption, currentLang]);
 
   // Обработчик изменения поискового запроса
   const handleSearchChange = (e) => {
@@ -238,10 +241,10 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
   const handleResetFilters = () => {
     setActiveCategory('all');
     setActiveType('all');
-    setActiveSeason('all');
+    setShowPopularOnly(false);
     setSearchTerm('');
-    setPriceRange([0, 5000]);
-    setDurationRange([1, 14]);
+    setPriceRange([0, 10000]);
+    setDurationRange([1, 25]);
     setSortOption('recommended');
   };
 
@@ -257,15 +260,13 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
     return type ? type.title[currentLang] : '';
   };
 
-  const getSeasonTitle = (seasonId) => {
-    if (seasonId === 'all') return t.allTours;
-    const season = seasons.find(s => s.id === seasonId);
-    return season ? season.title[currentLang] : '';
-  };
-
   // Информация об активных фильтрах
   const activeFilters = useMemo(() => {
     const filters = [];
+
+    if (showPopularOnly) {
+      filters.push({ type: 'popular', value: t.popularOnly });
+    }
 
     if (activeCategory !== 'all') {
       filters.push({ type: 'category', value: getCategoryTitle(activeCategory) });
@@ -275,57 +276,66 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       filters.push({ type: 'type', value: getTypeTitle(activeType) });
     }
 
-    if (activeSeason !== 'all') {
-      filters.push({ type: 'season', value: getSeasonTitle(activeSeason) });
-    }
-
-    if (priceRange[0] > 0 || priceRange[1] < 5000) {
+    if (priceRange[0] > 0 || priceRange[1] < 10000) {
       filters.push({ type: 'price', value: `$${priceRange[0]} - $${priceRange[1]}` });
     }
 
-    if (durationRange[0] > 1 || durationRange[1] < 14) {
+    if (durationRange[0] > 1 || durationRange[1] < 25) {
       filters.push({ type: 'duration', value: `${durationRange[0]}-${durationRange[1]} ${t.days}` });
     }
 
     return filters;
-  }, [activeCategory, activeType, activeSeason, priceRange, durationRange, currentLang]);
+  }, [activeCategory, activeType, showPopularOnly, priceRange, durationRange, currentLang]);
 
   return (
     <div className="min-h-screen bg-white">
 
         {/* Hero Section */}
         <section
-          className="relative bg-cover bg-center flex" // Добавляем flex
+          className="relative bg-cover bg-center flex"
           style={{
             backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/tours.png',
             height: '60vh'
           }}
         >
-          <div className="container mx-auto px-4 flex flex-col justify-center h-full"> {/* Ключевые изменения здесь */}
-            <div className="text-center"> {/* Оборачиваем в дополнительный div для центрирования */}
+          <div className="container mx-auto px-4 flex flex-col justify-center h-full">
+            <div className="text-center">
               <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">{t.allTours}</h1>
               <p className="text-xl text-white mb-8 max-w-3xl mx-auto">{t.findYourPerfectTour}</p>
 
               <div className="max-w-3xl mx-auto">
-                {/* Поисковая строка и кнопка фильтра */}
-                <div className="flex flex-col sm:flex-row">
-                  <div className="relative flex-grow mb-3 sm:mb-0">
+                {/* Поисковая строка и кнопки */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-grow">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       placeholder={t.searchPlaceholder}
                       value={searchTerm}
                       onChange={handleSearchChange}
-                      className="pl-10 pr-4 py-3 w-full rounded-l-md rounded-r-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      className="pl-10 pr-4 py-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
                   </div>
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-md sm:rounded-l-none"
-                  >
-                    <Filter className="w-5 h-5 mr-2" />
-                    {t.filter}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowPopularOnly(!showPopularOnly)}
+                      className={`flex items-center justify-center px-6 py-3 rounded-md font-medium transition-colors ${
+                        showPopularOnly
+                          ? 'bg-pink-500 text-white'
+                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <Star className={`w-5 h-5 mr-2 ${showPopularOnly ? 'text-white' : 'text-pink-500'}`} />
+                      {t.popularOnly}
+                    </button>
+                    <button
+                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-md"
+                    >
+                      <Filter className="w-5 h-5 mr-2" />
+                      {t.filter}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -334,7 +344,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
       {/* Active Filters */}
       {activeFilters.length > 0 && (
-        <div className="bg-gray-100 py-4">
+        <div className="bg-gray-50 py-4">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-gray-700 font-medium">{t.filter}:</span>
@@ -367,7 +377,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                 <div className="space-y-2">
                   <button
                     onClick={() => setActiveCategory('all')}
-                    className={`px-3 py-1 rounded-full ${activeCategory === 'all' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                    className={`block w-full text-left px-3 py-2 rounded ${activeCategory === 'all' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   >
                     {t.allTours}
                   </button>
@@ -375,7 +385,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                     <button
                       key={category.id}
                       onClick={() => setActiveCategory(category.id)}
-                      className={`px-3 py-1 rounded-full ${activeCategory === category.id ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                      className={`block w-full text-left px-3 py-2 rounded ${activeCategory === category.id ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                     >
                       {category.title[currentLang]}
                     </button>
@@ -386,7 +396,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                 <div className="space-y-2">
                   <button
                     onClick={() => setActiveType('all')}
-                    className={`px-3 py-1 rounded-full ${activeType === 'all' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                    className={`block w-full text-left px-3 py-2 rounded ${activeType === 'all' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   >
                     {t.allTypes}
                   </button>
@@ -394,28 +404,9 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                     <button
                       key={type.id}
                       onClick={() => setActiveType(type.id)}
-                      className={`px-3 py-1 rounded-full ${activeType === type.id ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                      className={`block w-full text-left px-3 py-2 rounded ${activeType === type.id ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                     >
                       {type.title[currentLang]}
-                    </button>
-                  ))}
-                </div>
-
-                <h3 className="font-bold text-gray-700 mb-2 mt-6">{t.season}</h3>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setActiveSeason('all')}
-                    className={`px-3 py-1 rounded-full ${activeSeason === 'all' ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  >
-                    {t.allTours}
-                  </button>
-                  {seasons.map(season => (
-                    <button
-                      key={season.id}
-                      onClick={() => setActiveSeason(season.id)}
-                      className={`px-3 py-1 rounded-full ${activeSeason === season.id ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                    >
-                      {season.title[currentLang]}
                     </button>
                   ))}
                 </div>
@@ -443,7 +434,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                   <input
                     type="range"
                     min="1"
-                    max="14"
+                    max="25"
                     step="1"
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     value={durationRange[1]}
@@ -462,7 +453,7 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                   <input
                     type="range"
                     min="0"
-                    max="5000"
+                    max="10000"
                     step="100"
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                     value={priceRange[1]}

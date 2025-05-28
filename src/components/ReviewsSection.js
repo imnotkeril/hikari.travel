@@ -74,20 +74,38 @@ const ReviewsSection = ({
     }
   };
 
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations['en'];
 
-  // Получаем отзывы в зависимости от параметров
+  // Получаем отзывы в зависимости от параметров с безопасной обработкой
   let reviews = [];
-  if (tourId) {
-    reviews = getReviewsByTourId(tourId);
-  } else if (featured) {
-    reviews = getFeaturedReviews();
-  } else {
-    reviews = getAllReviews();
+  try {
+    if (tourId) {
+      reviews = getReviewsByTourId(tourId) || [];
+    } else if (featured) {
+      reviews = getFeaturedReviews() || [];
+    } else {
+      reviews = getAllReviews() || [];
+    }
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+    reviews = [];
   }
 
+  // Фильтруем отзывы и проверяем их структуру
+  reviews = reviews.filter(review =>
+    review &&
+    review.author &&
+    review.author.name &&
+    review.text &&
+    review.text[currentLang]
+  );
+
   // Сортируем отзывы по дате (сначала новые)
-  reviews = [...reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
+  reviews = [...reviews].sort((a, b) => {
+    const dateA = new Date(a.date || '2024-01-01');
+    const dateB = new Date(b.date || '2024-01-01');
+    return dateB - dateA;
+  });
 
   // Ограничиваем количество отзывов, если showAll = false
   // Учитываем skipFirst для пропуска первых N отзывов
@@ -114,13 +132,17 @@ const ReviewsSection = ({
   // Функция для форматирования даты
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(
-      currentLang === 'ru' ? 'ru-RU' :
-      currentLang === 'ja' ? 'ja-JP' :
-      'en-US',
-      { day: 'numeric', month: 'long', year: 'numeric' }
-    );
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString(
+        currentLang === 'ru' ? 'ru-RU' :
+        currentLang === 'ja' ? 'ja-JP' :
+        'en-US',
+        { day: 'numeric', month: 'long', year: 'numeric' }
+      );
+    } catch (error) {
+      return '';
+    }
   };
 
   // Обработчик ошибки загрузки изображения
@@ -130,6 +152,14 @@ const ReviewsSection = ({
 
   // Компонент аватара с fallback на эмодзи
   const ReviewAvatar = ({ review }) => {
+    if (!review || !review.author) {
+      return (
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center text-white text-xl">
+          😊
+        </div>
+      );
+    }
+
     const hasImageError = imageErrors.has(review.id);
 
     if (hasImageError || !review.author.image) {
@@ -143,7 +173,7 @@ const ReviewsSection = ({
     return (
       <img
         src={review.author.image}
-        alt={review.author.name}
+        alt={review.author.name || 'User'}
         className="w-12 h-12 rounded-full object-cover"
         onError={() => handleImageError(review.id)}
       />
@@ -151,7 +181,7 @@ const ReviewsSection = ({
   };
 
   // Если отзывов нет
-  if (reviews.length === 0) {
+  if (!reviews || reviews.length === 0) {
     return (
       <div className={`bg-white rounded-lg shadow-md p-6 text-center ${className}`}>
         <h3 className="text-xl font-bold text-gray-800 mb-2">{t.noReviews}</h3>
@@ -165,6 +195,19 @@ const ReviewsSection = ({
 
   // Отображение в виде слайдера
   if (variant === 'slider') {
+    const currentReview = displayedReviews[currentSlide];
+
+    // Проверяем что текущий отзыв существует
+    if (!currentReview) {
+      return (
+        <div className={`${className}`}>
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <p className="text-gray-600">{t.noReviews}</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={`${className}`}>
         {/* Заголовок и кнопки */}
@@ -180,18 +223,22 @@ const ReviewsSection = ({
                   {t.viewAll}
                 </button>
               )}
-              <button
-                onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayedReviews.length - 1 : prev - 1))}
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setCurrentSlide((prev) => (prev === displayedReviews.length - 1 ? 0 : prev + 1))}
-                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {displayedReviews.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayedReviews.length - 1 : prev - 1))}
+                    className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentSlide((prev) => (prev === displayedReviews.length - 1 ? 0 : prev + 1))}
+                    className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -199,30 +246,30 @@ const ReviewsSection = ({
         {/* Слайдер */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <div className="flex items-center mb-4">
-            <ReviewAvatar review={displayedReviews[currentSlide]} />
+            <ReviewAvatar review={currentReview} />
             <div className="ml-4">
               <div className="flex items-center">
-                <h3 className="text-lg font-bold text-gray-800 mr-2">{displayedReviews[currentSlide].author.name}</h3>
-                <span className="text-gray-500 text-sm">{formatDate(displayedReviews[currentSlide].date)}</span>
+                <h3 className="text-lg font-bold text-gray-800 mr-2">{currentReview.author?.name || 'Anonymous'}</h3>
+                <span className="text-gray-500 text-sm">{formatDate(currentReview.date)}</span>
               </div>
               {showRating && (
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < displayedReviews[currentSlide].rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                      className={`w-4 h-4 ${i < (currentReview.rating || 5) ? 'text-yellow-500' : 'text-gray-300'}`}
                     />
                   ))}
                 </div>
               )}
-              <p className="text-gray-500 text-sm">{displayedReviews[currentSlide].author.location[currentLang]}</p>
+              <p className="text-gray-500 text-sm">{currentReview.author?.location?.[currentLang] || ''}</p>
 
-              {displayedReviews[currentSlide].tourId && (
-                <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {displayedReviews[currentSlide].tourId}</p>
+              {currentReview.tourId && (
+                <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {currentReview.tourId}</p>
               )}
             </div>
           </div>
-          <p className="text-gray-700">"{displayedReviews[currentSlide].text[currentLang]}"</p>
+          <p className="text-gray-700">"{currentReview.text?.[currentLang] || currentReview.text || ''}"</p>
 
           {/* Индикаторы слайдов */}
           {showControls && displayedReviews.length > 1 && (
@@ -280,14 +327,14 @@ const ReviewsSection = ({
               <div className="flex items-center mb-4">
                 <ReviewAvatar review={review} />
                 <div className="ml-4">
-                  <h3 className="text-lg font-bold text-gray-800">{review.author.name}</h3>
-                  <p className="text-gray-500 text-sm">{review.author.location[currentLang]}</p>
+                  <h3 className="text-lg font-bold text-gray-800">{review.author?.name || 'Anonymous'}</h3>
+                  <p className="text-gray-500 text-sm">{review.author?.location?.[currentLang] || ''}</p>
                   {showRating && (
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-4 h-4 ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < (review.rating || 5) ? 'text-yellow-500' : 'text-gray-300'}`}
                         />
                       ))}
                     </div>
@@ -297,7 +344,7 @@ const ReviewsSection = ({
                   )}
                 </div>
               </div>
-              <p className="text-gray-700 italic">"{review.text[currentLang]}"</p>
+              <p className="text-gray-700 italic">"{review.text?.[currentLang] || review.text || ''}"</p>
               <p className="text-gray-500 text-sm mt-4 text-right">{formatDate(review.date)}</p>
             </div>
           ))}
@@ -347,7 +394,7 @@ const ReviewsSection = ({
               <ReviewAvatar review={review} />
               <div className="ml-4">
                 <div className="flex items-center">
-                  <h3 className="text-lg font-bold text-gray-800 mr-2">{review.author.name}</h3>
+                  <h3 className="text-lg font-bold text-gray-800 mr-2">{review.author?.name || 'Anonymous'}</h3>
                   <span className="text-gray-500 text-sm">{formatDate(review.date)}</span>
                 </div>
                 {showRating && (
@@ -355,18 +402,18 @@ const ReviewsSection = ({
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                        className={`w-4 h-4 ${i < (review.rating || 5) ? 'text-yellow-500' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
                 )}
-                <p className="text-gray-500 text-sm">{review.author.location[currentLang]}</p>
+                <p className="text-gray-500 text-sm">{review.author?.location?.[currentLang] || ''}</p>
                 {review.tourId && (
                   <p className="text-pink-500 text-sm mt-1">{t.tourReview}: {review.tourId}</p>
                 )}
               </div>
             </div>
-            <p className="text-gray-700">"{review.text[currentLang]}"</p>
+            <p className="text-gray-700">"{review.text?.[currentLang] || review.text || ''}"</p>
           </div>
         ))}
       </div>
