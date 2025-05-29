@@ -26,6 +26,14 @@ import TourCard from '../components/TourCard';
 import ReviewsSection from '../components/ReviewsSection';
 import { useAppContext } from '../context/AppContext';
 
+// Функция для безопасного получения локализованного значения
+const getLocalizedValue = (value, lang) => {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && value[lang]) return value[lang];
+  return '';
+};
+
 // Функция для глубокой локализации многоязычных объектов
 const localizeDeep = (obj, currentLang) => {
   if (!obj) return obj;
@@ -58,43 +66,71 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
   const [relatedTours, setRelatedTours] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [showFullItinerary, setShowFullItinerary] = useState(false);
-  const { convertPrice, formatPrice, currentCurrency } = useAppContext();
+  const { convertPrice, formatPrice, currentCurrency, selectedTour: contextSelectedTour } = useAppContext();
 
   // Эффект для загрузки данных о туре
+  // Эффект для загрузки данных о туре
   useEffect(() => {
-    // Здесь в реальном приложении мы бы загружали данные о туре по ID
-    // В нашем случае, просто выбираем первый тур или конкретный тур по ID
-    let tour;
-    if (tourId) {
+    let tour = null;
+
+    // Если у нас есть selectedTour из контекста, используем его
+    if (contextSelectedTour) {
+      tour = contextSelectedTour;
+    } else if (tourId) {
+      // Ищем по tourId в URL
       tour = toursData.find(t => t.id === tourId);
+    } else {
+      // Если нет tourId, берем первый тур как fallback
+      tour = toursData[0];
     }
 
-    if (!tour && toursData.length > 0) {
-      tour = toursData[0]; // Выбираем первый тур, если конкретный не найден
-    }
-
-    setSelectedTour(tour);
-
-    // Находим похожие туры (того же типа или категории)
+    // Если тур найден, устанавливаем его
     if (tour) {
-      const similar = toursData
-        .filter(t => t.id !== tour.id && (
-          (t.types && tour.types && t.types.some(type => tour.types.includes(type))) ||
-          t.category === tour.category
-        ))
-        .slice(0, 3);
+      setSelectedTour(tour);
+    }
+  }, [tourId, contextSelectedTour]); // БЕЗ selectedTour в зависимостях!
+
+  // ОТДЕЛЬНЫЙ useEffect для похожих туров
+  // ОТДЕЛЬНЫЙ useEffect для похожих туров
+  useEffect(() => {
+    if (selectedTour) {
+      console.log('Finding similar tours for:', selectedTour.id);
+      console.log('Current tour category:', selectedTour.category);
+      console.log('Current tour types:', selectedTour.types);
+
+      // Сначала ищем по категории (исключая текущий тур)
+      let similarByCategory = toursData.filter(t =>
+        t.id !== selectedTour.id &&
+        t.category === selectedTour.category
+      );
+
+      // Потом ищем по типам (исключая уже найденные и текущий тур)
+      let similarByTypes = toursData.filter(t =>
+        t.id !== selectedTour.id &&
+        !similarByCategory.some(s => s.id === t.id) &&
+        t.types && selectedTour.types &&
+        t.types.some(type => selectedTour.types.includes(type))
+      );
+
+      // Объединяем результаты
+      let similar = [...similarByCategory, ...similarByTypes];
+
+      // Если все еще мало, добавляем случайные туры
+      if (similar.length < 3) {
+        const remaining = toursData.filter(t =>
+          t.id !== selectedTour.id &&
+          !similar.some(s => s.id === t.id)
+        );
+        similar = [...similar, ...remaining];
+      }
+
+      // Берем только первые 3
+      similar = similar.slice(0, 3);
+
+      console.log('Similar tours found:', similar.map(t => ({ id: t.id, category: t.category, types: t.types })));
       setRelatedTours(similar);
     }
-  }, [tourId]);
-
-  // Если тур не загружен, показываем загрузку
-  if (!selectedTour) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-pink-500 border-opacity-50"></div>
-      </div>
-    );
-  }
+  }, [selectedTour]);
 
   // Переводы
   const translations = {
@@ -156,7 +192,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       packingList: 'Что взять с собой',
       tourDuration: 'Продолжительность',
       groupSizeInfo: 'Размер группы',
-      destinations: 'направлений'
+      destinations: 'направлений',
+      popular: 'популярное'
     },
     en: {
       backToTours: 'Back to Tours',
@@ -216,7 +253,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       packingList: 'What to Bring',
       tourDuration: 'Duration',
       groupSizeInfo: 'Group Size',
-      destinations: 'destinations'
+      destinations: 'destinations',
+      popular: 'popular'
     },
     ja: {
       backToTours: 'ツアー一覧に戻る',
@@ -276,7 +314,8 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
       packingList: '持参するもの',
       tourDuration: '期間',
       groupSizeInfo: 'グループサイズ',
-      destinations: '目的地'
+      destinations: '目的地',
+      popular: '人気'
     }
   };
 
@@ -293,30 +332,41 @@ function TourDetailsPage({ currentLang, setCurrentLang, navigateTo, bookTour, to
   };
 
   // Конвертируем основную цену тура
-  const convertedPrice = convertPrice(selectedTour.price, 'USD', currentCurrency);
-  const formattedPrice = formatPrice(convertedPrice, currentCurrency);
+  // Если тур не загружен, показываем загрузку
+    if (!selectedTour) {
+      return (
+        <div className="min-h-screen flex justify-center items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-pink-500 border-opacity-50"></div>
+        </div>
+      );
+    }
 
-  // Расчет общей стоимости с опциями
-  const calculateTotalPrice = () => {
-    let total = selectedTour.price;
-    selectedOptions.forEach(option => {
-      total += option.price;
-    });
-    const convertedTotal = convertPrice(total, 'USD', currentCurrency);
-    return formatPrice(convertedTotal, currentCurrency);
-  };
+    // Конвертируем основную цену тура
+    const convertedPrice = convertPrice(selectedTour.price, 'USD', currentCurrency);
+    const formattedPrice = formatPrice(convertedPrice, currentCurrency);
 
-  // Обработчик выбора дополнительных опций
-  const handleOptionToggle = (option) => {
-    setSelectedOptions(prev => {
-      const exists = prev.find(o => o.name[currentLang] === option.name[currentLang]);
-      if (exists) {
-        return prev.filter(o => o.name[currentLang] !== option.name[currentLang]);
-      } else {
-        return [...prev, option];
-      }
-    });
-  };
+    // Расчет общей стоимости с опциями
+    const calculateTotalPrice = () => {
+      let total = selectedTour.price;
+      selectedOptions.forEach(option => {
+        total += option.price;
+      });
+      const convertedTotal = convertPrice(total, 'USD', currentCurrency);
+      return formatPrice(convertedTotal, currentCurrency);
+    };
+
+    // Обработчик выбора дополнительных опций
+    const handleOptionToggle = (option) => {
+      setSelectedOptions(prev => {
+        const exists = prev.find(o => o.name[currentLang] === option.name[currentLang]);
+        if (exists) {
+          return prev.filter(o => o.name[currentLang] !== option.name[currentLang]);
+        } else {
+          return [...prev, option];
+        }
+      });
+    };
+
 
 return (
   <div className="min-h-screen bg-white">
@@ -332,13 +382,17 @@ return (
               <ArrowLeft className="mr-2" />
               {t.backToTours}
             </button>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white">{selectedTour.title[currentLang]}</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white">
+              {selectedTour && selectedTour.title ?
+                (typeof selectedTour.title === 'string' ? selectedTour.title : selectedTour.title[currentLang])
+                : 'Загрузка...'}
+            </h1>
           </div>
           <div className="flex items-center mt-4 md:mt-0">
             <div className="flex items-center gap-2">
               {selectedTour.popular && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full bg-pink-500 text-white text-sm font-medium">
-                  Популярное
+                  {t.popular}
                 </span>
               )}
               {getTypeNames().length > 0 && (
@@ -413,16 +467,8 @@ return (
               </a>
             </nav>
 
-            <div className="flex space-x-2 py-3">
-              <button
-                onClick={() => bookTour(localizeDeep(selectedTour, currentLang))}
-                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded"
-              >
-                {t.bookNow}
-              </button>
-              <button className="border border-pink-500 text-pink-500 hover:bg-pink-50 font-bold py-2 px-4 rounded">
-                <Heart className="w-5 h-5" />
-              </button>
+            <div className="py-3">
+              {/* Название уже есть в hero секции выше */}
             </div>
           </div>
         </div>

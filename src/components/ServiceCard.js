@@ -135,6 +135,10 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
 
   // Обработчик бронирования
   const handleBook = () => {
+    console.log('ServiceCard handleBook called for service:', service.id);
+    console.log('Service title:', service.title[currentLang]);
+    console.log('Service image:', service.image);
+
     const bookingData = {
       service: service,
       selectedOption: selectedOption,
@@ -143,6 +147,7 @@ const ServiceCard = ({ service, currentLang, onBook, className = '' }) => {
       currentLang: currentLang,
       currency: currentCurrency
     };
+    console.log('BookingData being sent:', bookingData);
     onBook(bookingData);
   };
 

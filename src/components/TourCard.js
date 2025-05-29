@@ -2,7 +2,7 @@
 import React from 'react';
 import { Calendar, Users, MapPin, Star } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { tourTypes } from '../data/toursData';
+import { tourTypes, tourLabels } from '../data/toursData';
 
 const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }) => {
   const { convertPrice, formatPrice, currentCurrency } = useAppContext();
@@ -115,7 +115,7 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
         {tour.popular && (
           <div className="absolute bottom-4 left-4">
             <span className="bg-pink-500 text-white text-xs px-2 py-1 rounded-full">
-              {t.popular}
+              {tourLabels.popular[currentLang]}
             </span>
           </div>
         )}

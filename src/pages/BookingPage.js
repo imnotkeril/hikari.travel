@@ -38,14 +38,16 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
   // Определяем, что бронируем - тур или услугу
   const selectedTour = tour;
   const selectedService = service;
-  const isBookingTour = !!selectedTour;
   const isBookingService = !!selectedService;
+  const isBookingTour = !!selectedTour && !isBookingService;
+
+  console.log('BookingPage props:', { tour, service, isBookingTour, isBookingService });
 
   // Если ни тур, ни услуга не выбраны, используем временный тур
   const defaultTour = {
     id: 1,
-    title: 'Classic Japan',
-    image: 'https://source.unsplash.com/featured/?tokyo,japan',
+    title: 'classic-kanto-tour',
+    image: '/images/tours/classic-kanto-tour.png',
     price: 2500,
     duration: 7,
     groupSizeMin: 8,
@@ -54,7 +56,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
     reviewCount: 28
   };
 
-  const bookingItem = selectedTour || selectedService || defaultTour;
+  const bookingItem = isBookingService ? selectedService : (selectedTour || defaultTour);
 
   // Переводы
   const translations = {
@@ -318,13 +320,13 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
   const t = translations[currentLang];
 
   // Примерные включенные и исключенные пункты
-  const included = isBookingTour ?
-    ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'] :
-    ['guide', 'activities', 'transportation'];
+  const included = isBookingService ?
+    (bookingItem.includes?.[currentLang] || ['guide', 'activities', 'transportation']) :
+    ['accommodation', 'transportation', 'guidedTours', 'breakfasts', 'entranceFees'];
 
-  const excluded = isBookingTour ?
-    ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'] :
-    ['accommodation', 'flights', 'personalExpenses'];
+  const excluded = isBookingService ?
+    [] : // Для услуг не показываем исключенные пункты
+    ['flights', 'otherMeals', 'personalExpenses', 'travelInsurance'];
 
   // Обработчики
   const handleNextStep = () => {
@@ -401,12 +403,29 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
 
   // Расчет общей стоимости с конвертацией валют
   const calculateTotal = () => {
-    let basePrice = bookingItem.price || 2500;
+    let basePrice;
 
-    // Если есть выбранные опции (из детальной страницы тура)
-    if (bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0) {
-      const optionsPrice = bookingItem.selectedOptions.reduce((sum, option) => sum + option.price, 0);
-      basePrice += optionsPrice;
+    if (isBookingService) {
+      // Для услуг используем цену выбранного варианта или базовую цену
+      if (bookingItem.selectedOption) {
+        basePrice = bookingItem.selectedOption.price;
+      } else {
+        basePrice = bookingItem.price || 2500;
+      }
+
+      // Добавляем стоимость дополнительных услуг
+      if (bookingItem.selectedExtras && bookingItem.selectedExtras.length > 0) {
+        const extrasPrice = bookingItem.selectedExtras.reduce((sum, extra) => sum + extra.price, 0);
+        basePrice += extrasPrice;
+      }
+    } else {
+      // Для туров используем старую логику
+      basePrice = bookingItem.price || 2500;
+
+      if (bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0) {
+        const optionsPrice = bookingItem.selectedOptions.reduce((sum, option) => sum + option.price, 0);
+        basePrice += optionsPrice;
+      }
     }
 
     // Рассчитываем стоимость для участников
@@ -483,21 +502,27 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
               {currentStep === 1 && (
                 <>
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
-                    {isBookingTour ? t.youSelected : t.serviceSelected}
+                    {isBookingService ? t.serviceSelected : t.youSelected}
                   </h2>
                   <div className="flex flex-col md:flex-row gap-4 mb-6">
                     <div className="md:w-1/3">
                       <img
-                        src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'}
-                        alt={bookingItem.title || bookingItem.name}
+                        src={isBookingService ?
+                          (bookingItem.image || 'https://source.unsplash.com/featured/?japan,service') :
+                          (bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan')
+                        }
+                        alt={isBookingService ?
+                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
+                          (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                        }
                         className="w-full h-48 object-cover rounded-lg"
                       />
                     </div>
                     <div className="md:w-2/3">
                       <h3 className="text-lg font-bold mb-2">
-                        {isBookingTour ?
-                          (bookingItem.title?.[currentLang] || bookingItem.title) :
-                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service')
+                        {isBookingService ?
+                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
+                          (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
                         }
                       </h3>
 
@@ -507,27 +532,29 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                           <div>
                             <div className="text-sm text-gray-500">{t.duration}</div>
                             <div>
-                              {isBookingTour ?
-                                `${bookingItem.duration || 7} ${t.days}` :
-                                `${bookingItem.duration || '2-3 hours'}`
+                              {isBookingService ?
+                                `${bookingItem.duration || '2-3 hours'}` :
+                                `${bookingItem.duration || 7} ${t.days}`
                               }
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center text-gray-600">
-                          <Users className="w-5 h-5 mr-2 text-pink-500" />
-                          <div>
-                            <div className="text-sm text-gray-500">{t.groupSize}</div>
+                        {!isBookingService && (
+                          <div className="flex items-center text-gray-600">
+                            <Users className="w-5 h-5 mr-2 text-pink-500" />
                             <div>
-                              {bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15} {t.people}
+                              <div className="text-sm text-gray-500">{t.groupSize}</div>
+                              <div>
+                                {bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15} {t.people}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </div>
 
-                      {/* Selected Options Display */}
-                      {bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0 && (
+                      {/* Selected Options Display для туров */}
+                      {!isBookingService && bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0 && (
                         <div className="mb-4">
                           <h4 className="font-medium text-gray-800 mb-2">{t.selectedOptions}</h4>
                           <div className="space-y-2">
@@ -546,19 +573,59 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                         </div>
                       )}
 
-                      <div className="flex items-center">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
-                            />
-                          ))}
+                      {/* Selected Service Options для услуг */}
+                      {isBookingService && bookingItem.selectedOption && (
+                        <div className="mb-4">
+                          <h4 className="font-medium text-gray-800 mb-2">{t.selectedOptions}</h4>
+                          <div className="bg-gray-50 p-2 rounded">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-700">{bookingItem.selectedOption.name[currentLang]}</span>
+                              <span className="font-medium text-pink-600">
+                                {formatPrice(convertPrice(bookingItem.selectedOption.price, 'JPY', currentCurrency), currentCurrency)}
+                              </span>
+                            </div>
+                            {bookingItem.selectedOption.description && (
+                              <div className="text-xs text-gray-500 mt-1">{bookingItem.selectedOption.description[currentLang]}</div>
+                            )}
+                          </div>
                         </div>
-                        <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
-                        <span className="mx-1 text-gray-400">·</span>
-                        <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
-                      </div>
+                      )}
+
+                      {/* Selected Extras для услуг */}
+                      {isBookingService && bookingItem.selectedExtras && bookingItem.selectedExtras.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="font-medium text-gray-800 mb-2">Дополнительно</h4>
+                          <div className="space-y-2">
+                            {bookingItem.selectedExtras.map((extra, index) => {
+                              const convertedExtraPrice = convertPrice(extra.price, 'JPY', currentCurrency);
+                              const formattedExtraPrice = formatPrice(convertedExtraPrice, currentCurrency);
+
+                              return (
+                                <div key={index} className="flex justify-between items-center text-sm bg-gray-50 p-2 rounded">
+                                  <span className="text-gray-700">{extra.name[currentLang]}</span>
+                                  <span className="font-medium text-pink-600">+{formattedExtraPrice}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {!isBookingService && (
+                        <div className="flex items-center">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
+                              />
+                            ))}
+                          </div>
+                          <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
+                          <span className="mx-1 text-gray-400">·</span>
+                          <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -812,47 +879,53 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
 
               <div className="mb-4">
                 <img
-                  src={bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan'}
-                  alt={bookingItem.title || bookingItem.name}
+                  src={bookingItem.image || (isBookingService ?
+                    'https://source.unsplash.com/featured/?japan,service' :
+                    'https://source.unsplash.com/featured/?tokyo,japan')
+                  }
+                  alt={isBookingService ?
+                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
+                    (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                  }
                   className="w-full h-40 object-cover rounded-lg mb-4"
                 />
                 <h3 className="text-lg font-bold mb-2">
-                  {isBookingTour ?
-                    (bookingItem.title?.[currentLang] || bookingItem.title) :
-                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service')
+                  {isBookingService ?
+                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
+                    (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
                   }
                 </h3>
 
-                <div className="flex items-center mb-2">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
-                      />
-                    ))}
+                {!isBookingService && (
+                  <div className="flex items-center mb-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < Math.floor(bookingItem.rating || 4.8) ? 'text-yellow-500' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
+                    <span className="mx-1 text-gray-400">·</span>
+                    <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
                   </div>
-                  <span className="ml-1 text-gray-600">{bookingItem.rating || 4.8}</span>
-                  <span className="mx-1 text-gray-400">·</span>
-                  <span className="text-gray-600">{bookingItem.reviewCount || 24} {t.reviewsCount}</span>
-                </div>
+                )}
 
                 <div className="flex justify-between mb-1">
-                  {isBookingTour ? (
-                    <>
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span>{bookingItem.duration} {t.days}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="w-4 h-4 mr-1" />
-                        <span>{bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15}</span>
-                      </div>
-                    </>
-                  ) : (
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <span>
+                      {isBookingService ?
+                        (bookingItem.duration || '2-3 hours') :
+                        `${bookingItem.duration} ${t.days}`
+                      }
+                    </span>
+                  </div>
+                  {!isBookingService && (
                     <div className="flex items-center text-gray-600">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span>{bookingItem.duration || '2-3 hours'}</span>
+                      <Users className="w-4 h-4 mr-1" />
+                      <span>{bookingItem.groupSizeMin || 8}-{bookingItem.groupSizeMax || 15}</span>
                     </div>
                   )}
                 </div>
@@ -872,8 +945,33 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t.basePrice}</span>
-                    <span className="font-medium">{formatPrice(convertPrice(bookingItem.price, isBookingService ? 'JPY' : 'USD', currentCurrency), currentCurrency)}</span>
+                    <span className="font-medium">
+                      {isBookingService ?
+                        (bookingItem.selectedOption ?
+                          formatPrice(convertPrice(bookingItem.selectedOption.price, 'JPY', currentCurrency), currentCurrency) :
+                          formatPrice(convertPrice(bookingItem.price || 2500, 'JPY', currentCurrency), currentCurrency)
+                        ) :
+                        formatPrice(convertPrice(bookingItem.price || 2500, 'USD', currentCurrency), currentCurrency)
+                      }
+                    </span>
                   </div>
+
+                  {/* Показываем выбранные дополнительные услуги для сервисов */}
+                  {isBookingService && bookingItem.selectedExtras && bookingItem.selectedExtras.length > 0 && (
+                    <>
+                      {bookingItem.selectedExtras.map((extra, index) => {
+                        const convertedExtraPrice = convertPrice(extra.price, 'JPY', currentCurrency);
+                        const formattedExtraPrice = formatPrice(convertedExtraPrice, currentCurrency);
+
+                        return (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span className="text-gray-600">{extra.name[currentLang]}</span>
+                            <span className="font-medium">+{formattedExtraPrice}</span>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
 
                   {bookingItem.selectedOptions && bookingItem.selectedOptions.length > 0 && (
                     <>
@@ -907,27 +1005,49 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                 </div>
               </div>
 
-              <div className="mt-6">
-                <h3 className="font-bold text-gray-800 mb-2">{t.included}</h3>
-                <ul className="space-y-1 mb-4">
-                  {included.map((item, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
-                      <Check className="w-4 h-4 text-green-500 mr-2" />
-                      <span>{t[item]}</span>
-                    </li>
-                  ))}
-                </ul>
+              {isBookingService ? (
+                // Для услуг показываем что реально включено из данных услуги
+                bookingItem.includes && bookingItem.includes[currentLang] && (
+                  <div className="mt-6">
+                    <h3 className="font-bold text-gray-800 mb-2">{t.included}</h3>
+                    <ul className="space-y-1">
+                      {bookingItem.includes[currentLang].map((item, index) => (
+                        <li key={index} className="flex items-center text-gray-600">
+                          <Check className="w-4 h-4 text-green-500 mr-2" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              ) : (
+                // Для туров показываем стандартные включено/исключено
+                <div className="mt-6">
+                  <h3 className="font-bold text-gray-800 mb-2">{t.included}</h3>
+                  <ul className="space-y-1 mb-4">
+                    {included.map((item, index) => (
+                      <li key={index} className="flex items-center text-gray-600">
+                        <Check className="w-4 h-4 text-green-500 mr-2" />
+                        <span>{t[item]}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                <h3 className="font-bold text-gray-800 mb-2">{t.excluded}</h3>
-                <ul className="space-y-1">
-                  {excluded.map((item, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
-                      <span className="text-red-500 mr-2">✗</span>
-                      <span>{t[item]}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  {excluded.length > 0 && (
+                    <>
+                      <h3 className="font-bold text-gray-800 mb-2">{t.excluded}</h3>
+                      <ul className="space-y-1">
+                        {excluded.map((item, index) => (
+                          <li key={index} className="flex items-center text-gray-600">
+                            <span className="text-red-500 mr-2">✗</span>
+                            <span>{t[item]}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

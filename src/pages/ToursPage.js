@@ -12,8 +12,9 @@ import {
 } from 'lucide-react';
 import { toursData, tourCategories, tourTypes } from '../data/toursData';
 import TourCard from '../components/TourCard';
-
+import { useAppContext } from '../context/AppContext';
 function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
+  const { setSelectedTour } = useAppContext(); // Добавить эту строку
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeType, setActiveType] = useState('all');
   const [showPopularOnly, setShowPopularOnly] = useState(false);
@@ -69,7 +70,8 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       route: 'Маршрут',
       clearFilters: 'Очистить фильтры',
       popularOnly: 'Популярные',
-      showPopular: 'Показать популярные'
+      showPopular: 'Показать популярные',
+      popular: 'популярное'
     },
     en: {
       menu: {
@@ -115,7 +117,8 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       route: 'Route',
       clearFilters: 'Clear Filters',
       popularOnly: 'Popular',
-      showPopular: 'Show popular'
+      showPopular: 'Show popular',
+      popular: 'popular'
     },
     ja: {
       menu: {
@@ -161,7 +164,8 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       route: 'ルート',
       clearFilters: 'フィルターをクリア',
       popularOnly: '人気',
-      showPopular: '人気を表示'
+      showPopular: '人気を表示',
+      popular: '人気'
     }
   };
 
@@ -491,19 +495,17 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
           {filteredTours.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredTours.map((tour) => (
-                <TourCard
-                  key={tour.id}
-                  tour={tour}
-                  bookTour={(localizedTour) => {
-                    bookTour(localizedTour);
-                  }}
-                  viewTourDetails={(localizedTour) => {
-                    bookTour(localizedTour);
-                    navigateTo('tour');
-                  }}
-                  translations={translations}
-                  currentLang={currentLang}
-                />
+                 <TourCard
+                   key={tour.id}
+                   tour={tour}
+                   bookTour={bookTour}
+                   viewTourDetails={() => {
+                     bookTour(tour);
+                     navigateTo('tour');
+                   }}
+                   translations={translations}
+                   currentLang={currentLang}
+                 />
               ))}
             </div>
           ) : (

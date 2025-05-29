@@ -4,7 +4,8 @@ import {
   Search,
   Filter,
   X,
-  ChevronDown
+  ChevronDown,
+  Star
 } from 'lucide-react';
 import { servicesData, serviceCategories, serviceTypes } from '../data/servicesData';
 import ServiceCard from '../components/ServiceCard';
@@ -54,7 +55,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       showing: 'Показано',
       of: 'из',
       servicesAvailable: 'доступных услуг',
-      popularServices: 'Популярные услуги',
+      popularServices: 'Популярные',
       featuredCategories: 'Основные категории'
     },
     en: {
@@ -91,7 +92,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       showing: 'Showing',
       of: 'of',
       servicesAvailable: 'services available',
-      popularServices: 'Popular Services',
+      popularServices: 'Popular',
       featuredCategories: 'Featured Categories'
     },
     ja: {
@@ -128,7 +129,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       showing: '表示中',
       of: '/',
       servicesAvailable: 'サービス利用可能',
-      popularServices: '人気サービス',
+      popularServices: '人気',
       featuredCategories: '主要カテゴリー'
     }
   };
@@ -271,24 +272,38 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
             <p className="text-xl text-white mb-8 max-w-3xl mx-auto">{t.findPerfectService}</p>
 
             <div className="max-w-3xl mx-auto">
-              <div className="flex flex-col sm:flex-row">
-                <div className="relative flex-grow mb-3 sm:mb-0">
+              {/* Поисковая строка и кнопки */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-grow">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
                     placeholder={t.searchPlaceholder}
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    className="pl-10 pr-4 py-3 w-full rounded-l-md rounded-r-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="pl-10 pr-4 py-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
-                <button
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-md sm:rounded-l-none"
-                >
-                  <Filter className="w-5 h-5 mr-2" />
-                  {t.filter}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setActiveType(activeType === 'popular' ? 'all' : 'popular')}
+                    className={`flex items-center justify-center px-6 py-3 rounded-md font-medium transition-colors ${
+                      activeType === 'popular'
+                        ? 'bg-pink-500 text-white'
+                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Star className={`w-5 h-5 mr-2 ${activeType === 'popular' ? 'text-white' : 'text-pink-500'}`} />
+                    {t.popularServices}
+                  </button>
+                  <button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-6 rounded-md"
+                  >
+                    <Filter className="w-5 h-5 mr-2" />
+                    {t.filter}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -324,7 +339,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       {isFilterOpen && (
         <section className="bg-white py-6 shadow-md">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Категории */}
               <div>
                 <h3 className="font-bold text-gray-700 mb-2">{t.categories}</h3>
@@ -350,36 +365,6 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
                       }`}
                     >
                       {category.icon} {category.title[currentLang]}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Типы */}
-              <div>
-                <h3 className="font-bold text-gray-700 mb-2">{t.types}</h3>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setActiveType('all')}
-                    className={`block w-full text-left px-3 py-2 rounded ${
-                      activeType === 'all'
-                        ? 'bg-pink-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {t.allTypes}
-                  </button>
-                  {serviceTypes.map(type => (
-                    <button
-                      key={type.id}
-                      onClick={() => setActiveType(type.id)}
-                      className={`block w-full text-left px-3 py-2 rounded ${
-                        activeType === type.id
-                          ? 'bg-pink-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {type.title[currentLang]}
                     </button>
                   ))}
                 </div>

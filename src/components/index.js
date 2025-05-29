@@ -1,7 +1,6 @@
 // src/components/index.js
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FAQ } from './FAQ';
-export { default as FavoriteButton } from './FavoriteButton';
 export { default as FeatureTour } from './FeatureTour';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';

@@ -292,10 +292,10 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
   // Данные о направлениях
   const destinations = [
-    { name: 'Tokyo', image: '/images/destinations/tokyo.png', count: 10 },
-    { name: 'Kyoto', image: '/images/destinations/kyoto.png', count: 6 },
-    { name: 'Osaka', image: '/images/destinations/osaka.png', count: 5 },
-    { name: 'Hakone', image: '/images/destinations/hakone.png', count: 3 }
+    { name: 'Tokyo', image: '/images/destinations/tokyo.png'},
+    { name: 'Kyoto', image: '/images/destinations/kyoto.png'},
+    { name: 'Osaka', image: '/images/destinations/osaka.png'},
+    { name: 'Fuji', image: '/images/destinations/fuji.png'}
   ];
 
   // Данные об опыте
@@ -389,21 +389,17 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Фильтруем только популярные туры и берем первые 3 */}
-            {(toursData || [])
-              .filter(tour =>
-                tour.type === 'popular' ||
-                (tour.tags && tour.tags[currentLang] && tour.tags[currentLang].includes('популярное'))
-              )
-              .slice(0, 3)
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {/* Показываем конкретные 4 тура по ID */}
+            {['classic-tokyo-tour', 'classic-kyoto-tour', 'classic-osaka-tour', 'classic-kansai-tour']
+              .map(id => (toursData || []).find(tour => tour.id === id))
+              .filter(Boolean) // Убираем undefined, если вдруг тур не найден
               .map((tour) => (
                 <TourCard
                   key={tour.id}
                   tour={tour}
                   bookTour={bookTour}
                   viewTourDetails={() => {
-                    // Сохраняем выбранный тур и переходим на страницу детального просмотра
                     bookTour(tour);
                     navigateTo('tour');
                   }}
@@ -414,6 +410,7 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
           </div>
         </div>
       </section>
+
 
       {/* Why Choose Us Section */}
       <section className="py-16">
@@ -477,7 +474,6 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                 <div className="absolute inset-0 bg-black bg-opacity-30 flex items-end">
                   <div className="p-4 w-full">
                     <h3 className="text-white text-xl font-bold">{destination.name}</h3>
-                    <p className="text-white text-sm">{destination.count} tours</p>
                   </div>
                 </div>
               </div>

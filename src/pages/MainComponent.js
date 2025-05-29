@@ -49,13 +49,30 @@ function MainComponent() {
 
   // Функция для бронирования тура
   const bookTour = (tour) => {
+    console.log('bookTour called with:', tour);
     setSelectedTour(tour);
+    setSelectedService(null); // Очищаем выбранную услугу
     navigateTo("booking");
   };
 
   // Функция для бронирования услуги
   const bookService = (serviceData) => {
-    setSelectedService(serviceData);
+    console.log('bookService called with:', serviceData);
+
+    // Создаем объект услуги с выбранными опциями
+    const serviceWithSelections = {
+      ...serviceData.service,
+      selectedOption: serviceData.selectedOption,
+      selectedExtras: serviceData.selectedExtras,
+      totalPrice: serviceData.totalPrice,
+      currentLang: serviceData.currentLang,
+      currency: serviceData.currency
+    };
+
+    console.log('Service with selections:', serviceWithSelections);
+
+    setSelectedService(serviceWithSelections);
+    setSelectedTour(null); // Очищаем выбранный тур
     navigateTo("booking");
   };
 
@@ -84,6 +101,7 @@ function MainComponent() {
             setCurrentLang={setCurrentLang}
             navigateTo={navigateTo}
             bookTour={bookTour}
+            setSelectedTour={setSelectedTour}
           />
         } />
         <Route path="/services" element={
