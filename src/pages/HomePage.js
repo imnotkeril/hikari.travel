@@ -292,18 +292,18 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
 
   // Данные о направлениях
   const destinations = [
-    { name: 'Tokyo', image: '/images/destinations/tokyo.png'},
-    { name: 'Kyoto', image: '/images/destinations/kyoto.png'},
-    { name: 'Osaka', image: '/images/destinations/osaka.png'},
-    { name: 'Fuji', image: '/images/destinations/fuji.png'}
+    { name: 'Tokyo', image: '/images/destinations/tokyo.webp'},
+    { name: 'Kyoto', image: '/images/destinations/kyoto.webp'},
+    { name: 'Osaka', image: '/images/destinations/osaka.webp'},
+    { name: 'Fuji', image: '/images/destinations/fuji.webp'}
   ];
 
   // Данные об опыте
   const experiences = [
-    { name: 'Cherry Blossoms', image: '/images/experiences/cherry-blossom.png' },
-    { name: 'Japanese Cuisine', image: '/images/experiences/japanese-cuisine.png' },
-    { name: 'Temples & Shrines', image: '/images/experiences/temples-shrines.jpg' },
-    { name: 'Hot Springs', image: '/images/experiences/hot-springs.png' }
+    { name: 'Cherry Blossoms', image: '/images/experiences/cherry-blossom.webp' },
+    { name: 'Japanese Cuisine', image: '/images/experiences/japanese-cuisine.webp' },
+    { name: 'Temples & Shrines', image: '/images/experiences/temples-shrines.webp' },
+    { name: 'Hot Springs', image: '/images/experiences/hot-springs.webp' }
   ];
 
   // Данные об отзывах
@@ -350,7 +350,7 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       <section
         className="relative py-20 bg-cover bg-center"
         style={{
-          backgroundImage: 'url("/images/hero/home.jpg")',
+          backgroundImage: 'url("/images/hero/home.webp")',
           height: '60vh' // Увеличьте высоту для более эффектного вида
         }}
       >

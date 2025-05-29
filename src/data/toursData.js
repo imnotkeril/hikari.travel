@@ -236,7 +236,7 @@ export const toursData = [
     price: 9000,
     groupSizeMin: 8,
     groupSizeMax: 12,
-    image: '/images/tours/through-all-japan.png',
+    image: '/images/tours/through-all-japan.webp',
     seasons: ["spring", "summer", "autumn", "winter"],
     seasonDescription: {
       ru: 'Круглый год, каждый регион в своё лучшее время',
@@ -781,7 +781,7 @@ export const toursData = [
     price: 4500,
     groupSizeMin: 8,
     groupSizeMax: 15,
-    image: '/images/tours/classic-kanto-tour.png',
+    image: '/images/tours/classic-kanto-tour.webp',
     seasons: ["spring", "autumn", "winter"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры, осень: красные клены, зимой - иллюминации',
@@ -1209,7 +1209,7 @@ export const toursData = [
     price: 4500,
     groupSizeMin: 8,
     groupSizeMax: 15,
-    image: '/images/tours/classic-kansai-tour.png',
+    image: '/images/tours/classic-kansai-tour.webp',
     seasons: ["spring", "autumn", "winter"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры, осень: красные клены, зимой - иллюминации',
@@ -1665,7 +1665,7 @@ export const toursData = [
     price: 4300,
     groupSizeMin: 8,
     groupSizeMax: 15,
-    image: '/images/tours/golden-ring-japan-tour.png',
+    image: '/images/tours/golden-ring-japan-tour.webp',
     seasons: ["spring", "autumn"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры, осень: красные клены',
@@ -2050,7 +2050,7 @@ export const toursData = [
     price: 5500,
     groupSizeMin: 6,
     groupSizeMax: 10,
-    image: '/images/tours/culinary-journey-japan.png',
+    image: '/images/tours/culinary-journey-japan.webp',
     seasons: ["spring", "summer", "autumn", "winter", "all-year"],
     seasonDescription: {
       ru: 'Круглый год - сезонные особенности блюд в каждом регионе',
@@ -2496,7 +2496,7 @@ export const toursData = [
     price: 5000,
     groupSizeMin: 6,
     groupSizeMax: 8,
-    image: '/images/tours/japan-art-lovers-tour.png',
+    image: '/images/tours/japan-art-lovers-tour.webp',
     seasons: ["spring", "summer", "autumn", "winter", "all-year"],
     seasonDescription: {
       ru: 'Круглый год с сезонными выставками',
@@ -2958,7 +2958,7 @@ export const toursData = [
     price: 5300,
     groupSizeMin: 8,
     groupSizeMax: 12,
-    image: '/images/tours/samurai-path-tour.png',
+    image: '/images/tours/samurai-path-tour.webp',
     seasons: ["spring", "summer", "autumn", "winter", "all-year"],
     seasonDescription: {
       ru: 'Круглый год - история не знает сезонов',
@@ -3415,7 +3415,7 @@ export const toursData = [
     price: 1300,
     groupSizeMin: 8,
     groupSizeMax: 15,
-    image: '/images/tours/classic-tokyo-tour.png',
+    image: '/images/tours/classic-tokyo-tour.webp',
     seasons: ["spring", "autumn"],
     seasonDescription: {
       ru: 'Весна: сакура в парке Уэно, осень: клены в садах',
@@ -3763,7 +3763,7 @@ export const toursData = [
     price: 100,
     groupSizeMin: 10,
     groupSizeMax: 20,
-    image: '/images/tours/mount-fuji-day-tour.png',
+    image: '/images/tours/mount-fuji-day-tour.webp',
     seasons: ["spring", "summer", "autumn"],
     seasonDescription: {
       ru: 'Весна, лето, осень - лучшее время для восхождения: июль-август',
@@ -4075,7 +4075,7 @@ export const toursData = [
     price: 550,
     groupSizeMin: 6,
     groupSizeMax: 12,
-    image: '/images/tours/otaku-tokyo-tour.png',
+    image: '/images/tours/otaku-tokyo-tour.webp',
     seasons: ["summer"],
     seasonDescription: {
       ru: 'Лето: аниме-фестивали и косплей-мероприятия',
@@ -4487,7 +4487,7 @@ export const toursData = [
     price: 100,
     groupSizeMin: 10,
     groupSizeMax: 15,
-    image: '/images/tours/kamakura-day-trip.png',
+    image: '/images/tours/kamakura-day-trip.webp',
     seasons: ["spring", "summer", "autumn"],
     seasonDescription: {
       ru: 'Лето: пляжи, весна: сакура, осень: клены',
@@ -4941,7 +4941,7 @@ export const toursData = [
     price: 750,
     groupSizeMin: 10,
     groupSizeMax: 15,
-    image: '/images/tours/classic-kyoto-tour.png',
+    image: '/images/tours/classic-kyoto-tour.webp',
     seasons: ["spring", "autumn"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры, осень: красные клены',
@@ -5468,7 +5468,7 @@ export const toursData = [
     price: 550,
     groupSizeMin: 10,
     groupSizeMax: 16,
-    image: '/images/tours/classic-osaka-tour.png',
+    image: '/images/tours/classic-osaka-tour.webp',
     seasons: ["spring"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры вокруг замка Осаки',
@@ -6059,7 +6059,7 @@ export const toursData = [
     price: 100,
     groupSizeMin: 10,
     groupSizeMax: 20,
-    image: '/images/tours/nara-day-tour.png',
+    image: '/images/tours/nara-day-tour.webp',
     seasons: ["spring", "autumn", "all-year"],
     seasonDescription: {
       ru: 'Весна: цветение сакуры и новорожденные оленята, осень: красные клены',
@@ -6308,7 +6308,7 @@ export const toursData = [
     price: 1000,
     groupSizeMin: 4,
     groupSizeMax: 8,
-    image: '/images/tours/rural-japan.png',
+    image: '/images/tours/rural-japan.webp',
     seasons: ["winter", "spring", "summer", "autumn"],
     seasonDescription: {
       ru: 'Зимой: деревни под снегом с подсветкой, круглый год красиво',
@@ -6596,7 +6596,7 @@ export const toursData = [
     price: 3150,
     groupSizeMin: 6,
     groupSizeMax: 10,
-    image: '/images/tours/hot-springs-japan.png',
+    image: '/images/tours/hot-springs-japan.webp',
     seasons: ["all-year", "winter"],
     seasonDescription: {
       ru: 'Круглый год, особенно приятно зимой для контраста с холодным воздухом',
@@ -6973,7 +6973,7 @@ export const toursData = [
     price: 500, // Price per day starting from
     groupSizeMin: 1,
     groupSizeMax: 20,
-    image: '/images/tours/custom-tour.png',
+    image: '/images/tours/custom-tour.webp',
     seasons: ["spring", "summer", "autumn", "winter"],
     seasonDescription: {
       ru: 'Любой сезон по желанию клиента, планирование под конкретные даты',

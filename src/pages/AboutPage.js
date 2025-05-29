@@ -136,7 +136,7 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
       <section
         className="relative bg-cover bg-center flex"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/about.png)',
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/about.webp)',
           height: '60vh'
         }}
       >
@@ -169,7 +169,7 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
             </div>
             <div className="md:w-1/2">
               <img
-                src="/images/hero/team.png"
+                src="/images/hero/team.webp"
                 alt="Team in Japan"
                 className="rounded-lg shadow-lg w-full h-auto"
               />

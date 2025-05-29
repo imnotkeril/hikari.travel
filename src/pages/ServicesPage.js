@@ -262,7 +262,7 @@ function ServicesPage({ currentLang, setCurrentLang, navigateTo, bookService }) 
       <section
         className="relative bg-cover bg-center flex"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/services.png)',
+          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/services.webp)',
           height: '60vh'
         }}
       >

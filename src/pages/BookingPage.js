@@ -47,7 +47,7 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
   const defaultTour = {
     id: 1,
     title: 'classic-kanto-tour',
-    image: '/images/tours/classic-kanto-tour.png',
+    image: '/images/tours/classic-kanto-tour.webp',
     price: 2500,
     duration: 7,
     groupSizeMin: 8,
