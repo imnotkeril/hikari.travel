@@ -160,7 +160,9 @@ useEffect(() => {
       yourBooking: 'Ваше бронирование',
       price: 'Цена',
       selectedOptions: 'Выбранные опции',
-      basePrice: 'Базовая цена'
+      basePrice: 'Базовая цена',
+      extras: 'Дополнительно'
+
     },
     en: {
       menu: {
@@ -245,7 +247,8 @@ useEffect(() => {
       yourBooking: 'Your Booking',
       price: 'Price',
       selectedOptions: 'Selected Options',
-      basePrice: 'Base Price'
+      basePrice: 'Base Price',
+      extras: 'Extras'
     },
     ja: {
       menu: {
@@ -330,7 +333,8 @@ useEffect(() => {
       yourBooking: 'ご予約',
       price: '価格',
       selectedOptions: '選択したオプション',
-      basePrice: '基本料金'
+      basePrice: '基本料金',
+      extras: '追加オプション'
     }
   };
 
@@ -611,7 +615,7 @@ useEffect(() => {
                       {/* Selected Extras для услуг */}
                       {isBookingService && bookingItem.selectedExtras && bookingItem.selectedExtras.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="font-medium text-gray-800 mb-2">Дополнительно</h4>
+                          <h4 className="font-medium text-gray-800 mb-2">{t.extras}</h4>
                           <div className="space-y-2">
                             {bookingItem.selectedExtras.map((extra, index) => {
                               const convertedExtraPrice = convertPrice(extra.price, 'JPY', currentCurrency);
