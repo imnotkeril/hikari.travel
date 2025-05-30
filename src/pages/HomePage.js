@@ -11,8 +11,9 @@ import {
 import TourCard from '../components/TourCard';
 import { toursData } from '../data/toursData';
 import ReviewsSection from '../components/ReviewsSection';
-
+import { useAppContext } from '../context/AppContext';
 function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
+  const { setSelectedTour } = useAppContext(); // Добавить эту строку
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Переводы для главной страницы
@@ -399,9 +400,9 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                   key={tour.id}
                   tour={tour}
                   bookTour={bookTour}
-                  viewTourDetails={() => {
-                    bookTour(tour);
-                    navigateTo('tour');
+                  viewTourDetails={(tour) => {
+                    setSelectedTour(tour);
+                    navigateTo('tour', tour.id);
                   }}
                   translations={translations}
                   currentLang={currentLang}

@@ -11,7 +11,20 @@ import {
   X 
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-
+// Функция для безопасного получения локализованного значения
+// Функция для безопасного получения локализованного значения
+const getLocalizedValue = (value, lang, item = null) => {
+  if (!value) {
+    // Если value пустое, но у нас есть оригинальный item, попробуем взять из него
+    if (item && item.title && typeof item.title === 'object') {
+      return item.title[lang] || '';
+    }
+    return '';
+  }
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && value[lang]) return value[lang];
+  return '';
+};
 function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, saveBooking }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -57,7 +70,11 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
   };
 
   const bookingItem = isBookingService ? selectedService : (selectedTour || defaultTour);
-
+// Добавь этот useEffect для обновления локализации при смене языка
+useEffect(() => {
+  // Принудительно обновляем компонент при смене языка
+  // чтобы все локализованные значения пересчитались
+}, [currentLang]);
   // Переводы
   const translations = {
     ru: {
@@ -512,8 +529,8 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                           (bookingItem.image || 'https://source.unsplash.com/featured/?tokyo,japan')
                         }
                         alt={isBookingService ?
-                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
-                          (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                          (getLocalizedValue(bookingItem.title, currentLang) || getLocalizedValue(bookingItem.name, currentLang) || 'Service') :
+                          (getLocalizedValue(bookingItem.title, currentLang) || 'Tour')
                         }
                         className="w-full h-48 object-cover rounded-lg"
                       />
@@ -521,8 +538,8 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                     <div className="md:w-2/3">
                       <h3 className="text-lg font-bold mb-2">
                         {isBookingService ?
-                          (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
-                          (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                          (getLocalizedValue(bookingItem.title, currentLang) || getLocalizedValue(bookingItem.name, currentLang) || 'Service') :
+                          (getLocalizedValue(bookingItem.title, currentLang) || 'Tour')
                         }
                       </h3>
 
@@ -884,15 +901,15 @@ function BookingPage({ currentLang, setCurrentLang, navigateTo, tour, service, s
                     'https://source.unsplash.com/featured/?tokyo,japan')
                   }
                   alt={isBookingService ?
-                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
-                    (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                    (getLocalizedValue(bookingItem.title, currentLang) || getLocalizedValue(bookingItem.name, currentLang) || 'Service') :
+                    (getLocalizedValue(bookingItem.title, currentLang) || 'Tour')
                   }
                   className="w-full h-40 object-cover rounded-lg mb-4"
                 />
                 <h3 className="text-lg font-bold mb-2">
                   {isBookingService ?
-                    (bookingItem.title?.[currentLang] || bookingItem.name?.[currentLang] || 'Service') :
-                    (bookingItem.title?.[currentLang] || bookingItem.title || 'Tour')
+                    (getLocalizedValue(bookingItem.title, currentLang) || getLocalizedValue(bookingItem.name, currentLang) || 'Service') :
+                    (getLocalizedValue(bookingItem.title, currentLang) || 'Tour')
                   }
                 </h3>
 

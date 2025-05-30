@@ -28,7 +28,12 @@ export const useNavigation = () => {
         path = '/services';
         break;
       case 'tour':
-        path = `/tour`; // ID тура должен передаваться отдельно
+        // Если anchor содержит ID тура, добавляем его к пути
+        if (anchor) {
+          path = `/tour/${anchor}`;
+        } else {
+          path = `/tour`;
+        }
         break;
       case 'booking':
         path = '/booking';

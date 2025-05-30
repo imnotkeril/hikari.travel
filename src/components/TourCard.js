@@ -55,14 +55,14 @@ const TourCard = ({ tour, bookTour, viewTourDetails, translations, currentLang }
   };
 
   const handleBookTour = () => {
-    bookTour(localizedTour());
+    bookTour(tour);
   };
 
   const handleTourDetails = () => {
     if (viewTourDetails) {
-      viewTourDetails(localizedTour());
+      viewTourDetails(tour);
     } else {
-      bookTour(localizedTour());
+      bookTour(tour);
     }
   };
 

@@ -792,14 +792,14 @@ return (
 
               <button
                 onClick={() => {
-                  // Используем функцию глубокой локализации для всего объекта тура
-                  const localizedTour = localizeDeep(selectedTour, currentLang);
+                  // Передаем оригинальный тур с дополнительными данными
+                  const tourWithOptions = {
+                    ...selectedTour,
+                    currentLang: currentLang,
+                    selectedOptions: selectedOptions
+                  };
 
-                  // Добавляем информацию о текущем языке и выбранных опциях
-                  localizedTour.currentLang = currentLang;
-                  localizedTour.selectedOptions = selectedOptions;
-
-                  bookTour(localizedTour);
+                  bookTour(tourWithOptions);
                 }}
                 className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded mt-6"
               >

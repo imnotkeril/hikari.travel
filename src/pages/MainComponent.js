@@ -76,6 +76,13 @@ function MainComponent() {
     navigateTo("booking");
   };
 
+  // Функция для просмотра деталей тура с сохранением ID в URL
+  const viewTourDetails = (tour) => {
+    console.log('viewTourDetails called with:', tour);
+    setSelectedTour(tour);
+    navigateTo('tour', tour.id);
+  };
+
   return (
     <div className="app-container">
       {location.pathname !== '/login' && location.pathname !== '/admin' && (
@@ -93,6 +100,8 @@ function MainComponent() {
             setCurrentLang={setCurrentLang}
             navigateTo={navigateTo}
             bookTour={bookTour}
+            setSelectedTour={setSelectedTour}
+            viewTourDetails={viewTourDetails}
           />
         } />
         <Route path="/tours" element={
@@ -102,6 +111,7 @@ function MainComponent() {
             navigateTo={navigateTo}
             bookTour={bookTour}
             setSelectedTour={setSelectedTour}
+            viewTourDetails={viewTourDetails}
           />
         } />
         <Route path="/services" element={

@@ -499,9 +499,9 @@ function ToursPage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
                    key={tour.id}
                    tour={tour}
                    bookTour={bookTour}
-                   viewTourDetails={() => {
-                     bookTour(tour);
-                     navigateTo('tour');
+                   viewTourDetails={(tour) => {
+                     setSelectedTour(tour);
+                     navigateTo('tour', tour.id);
                    }}
                    translations={translations}
                    currentLang={currentLang}
