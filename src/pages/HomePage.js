@@ -431,7 +431,7 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
       {/* Call to Action */}
       {/* Добавляем проверку на наличие t.cta перед рендерингом секции */}
       {t && t.cta && (
-        <section className="py-16 bg-cover bg-center" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://source.unsplash.com/featured/?sakura,japan)' }}>
+        <section className="py-16 bg-cover bg-center" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/hitachi.webp)' }}>
           <div className="container mx-auto px-4 text-center text-white">
             <h2 className="text-3xl font-bold mb-4">{t.cta.title}</h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto">{t.cta.subtitle}</p>
