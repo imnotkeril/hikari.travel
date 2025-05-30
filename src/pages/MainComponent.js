@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useNavigation } from '../hooks/useNavigation';
-import { Header, Footer } from '../components';
+import { Header, Footer, ErrorBoundary } from '../components';
 import {
   HomePage,
   ToursPage,
@@ -83,109 +83,122 @@ function MainComponent() {
     navigateTo('tour', tour.id);
   };
 
+  // Обертка для navigateTo, которая правильно обрабатывает якоря
+  const handleNavigateTo = (page, anchor = null) => {
+    if (anchor) {
+      navigateTo(page, anchor);
+    } else {
+      navigateTo(page);
+    }
+  };
+
   return (
-    <div className="app-container">
-      {location.pathname !== '/login' && location.pathname !== '/admin' && (
-        <Header
-          currentLang={currentLang}
-          setCurrentLang={setCurrentLang}
-          navigateTo={navigateTo}
-        />
-      )}
+    <ErrorBoundary>
+      <div className="app-container">
+        {location.pathname !== '/login' && location.pathname !== '/admin' && (
+          <Header
+            currentLang={currentLang}
+            setCurrentLang={setCurrentLang}
+            navigateTo={handleNavigateTo}
+          />
+        )}
 
-      <Routes>
-        <Route path="/" element={
-          <HomePage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            bookTour={bookTour}
-            setSelectedTour={setSelectedTour}
-            viewTourDetails={viewTourDetails}
-          />
-        } />
-        <Route path="/tours" element={
-          <ToursPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            bookTour={bookTour}
-            setSelectedTour={setSelectedTour}
-            viewTourDetails={viewTourDetails}
-          />
-        } />
-        <Route path="/services" element={
-          <ServicesPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            bookService={bookService}
-          />
-        } />
-        <Route path="/tour/:tourId?" element={
-          <TourDetailsPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            bookTour={bookTour}
-          />
-        } />
-        <Route path="/booking" element={
-          <BookingPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            tour={selectedTour}
-            service={selectedService}
-            saveBooking={saveBooking}
-          />
-        } />
-        <Route path="/booking-confirmation" element={
-          <BookingConfirmationPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            bookingData={bookingData}
-          />
-        } />
-        <Route path="/about" element={
-          <AboutPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-          />
-        } />
-        <Route path="/contact" element={
-          <ContactPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-          />
-        } />
-        <Route path="/login" element={
-          <LoginPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            handleLogin={handleLogin}
-          />
-        } />
-        <Route path="/admin" element={
-          <AdminPage
-            currentLang={currentLang}
-            setCurrentLang={setCurrentLang}
-            navigateTo={navigateTo}
-            userData={userData}
-            handleLogout={handleLogout}
-            isLoggedIn={isLoggedIn}
-          />
-        } />
-      </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={
+              <HomePage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                bookTour={bookTour}
+                setSelectedTour={setSelectedTour}
+                viewTourDetails={viewTourDetails}
+              />
+            } />
+            <Route path="/tours" element={
+              <ToursPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                bookTour={bookTour}
+                setSelectedTour={setSelectedTour}
+                viewTourDetails={viewTourDetails}
+              />
+            } />
+            <Route path="/services" element={
+              <ServicesPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                bookService={bookService}
+              />
+            } />
+            <Route path="/tour/:tourId?" element={
+              <TourDetailsPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                bookTour={bookTour}
+              />
+            } />
+            <Route path="/booking" element={
+              <BookingPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                tour={selectedTour}
+                service={selectedService}
+                saveBooking={saveBooking}
+              />
+            } />
+            <Route path="/booking-confirmation" element={
+              <BookingConfirmationPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                bookingData={bookingData}
+              />
+            } />
+            <Route path="/about" element={
+              <AboutPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+              />
+            } />
+            <Route path="/contact" element={
+              <ContactPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+              />
+            } />
+            <Route path="/login" element={
+              <LoginPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                handleLogin={handleLogin}
+              />
+            } />
+            <Route path="/admin" element={
+              <AdminPage
+                currentLang={currentLang}
+                setCurrentLang={setCurrentLang}
+                navigateTo={handleNavigateTo}
+                userData={userData}
+                handleLogout={handleLogout}
+                isLoggedIn={isLoggedIn}
+              />
+            } />
+          </Routes>
+        </ErrorBoundary>
 
-      {location.pathname !== '/login' && location.pathname !== '/admin' && (
-        <Footer currentLang={currentLang} navigateTo={navigateTo} />
-      )}
-    </div>
+        {location.pathname !== '/login' && location.pathname !== '/admin' && (
+          <Footer currentLang={currentLang} navigateTo={handleNavigateTo} />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }
 

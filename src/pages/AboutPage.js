@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import ReviewsSection from '../components/ReviewsSection';
+import WhyChooseUs from '../components/WhyChooseUs';
+import FAQ from '../components/FAQ';
 
 function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,17 +33,9 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
       valueQualityText: 'Мы поддерживаем высокие стандарты качества во всех аспектах наших услуг.',
       valueRespect: 'Культурное уважение',
       valueRespectText: 'Мы глубоко уважаем японскую культуру и способствуем ответственному туризму.',
-      whyChooseUs: 'Почему выбирают нас',
       whyChooseUsText: 'В эпоху массового туризма мы предлагаем персонализированный подход к путешествиям по Японии. Наша команда состоит из квалифицированных специалистов, которые не только профессионально знают туристическую индустрию, но и имеют глубокое понимание японской культуры и менталитета.',
-      reason1: 'Экспертное знание Японии',
-      reason1Text: 'Наши специалисты проживают в Японии и обладают инсайдерским знанием культуры, истории и скрытых жемчужин страны.',
-      reason2: 'Полная языковая поддержка',
-      reason2Text: 'Мы обеспечиваем профессиональную поддержку на русском и английском языках на всех этапах путешествия.',
-      reason3: 'Продуманные программы',
-      reason3Text: 'Наши программы были разработаны с учетом интересов путешественников, а также отзывов наших клиентов.',
-      reason4: 'Внимание к деталям',
-      reason4Text: 'От планирования маршрута до подбора аутентичных мест - мы тщательно продумываем каждый аспект вашего путешествия.',
-      ourPartners: 'Наши партнеры',
+      testimonials: 'Отзывы наших клиентов',
+      faqSection: 'Часто задаваемые вопросы',
       readyToExplore: 'Готовы исследовать Японию?',
       startYourJourney: 'Начните свое путешествие с нами сегодня',
       contactUs: 'Связаться с нами',
@@ -69,18 +63,9 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
       valueQualityText: 'We maintain high quality standards in all aspects of our services.',
       valueRespect: 'Cultural Respect',
       valueRespectText: 'We deeply respect Japanese culture and promote responsible tourism.',
-      whyChooseUs: 'Why Choose Us',
       whyChooseUsText: 'In an era of mass tourism, we offer a personalized approach to traveling in Japan. Our team consists of qualified specialists who not only have professional knowledge of the tourism industry but also possess deep understanding of Japanese culture and mentality.',
-      reason1: 'Expert Knowledge of Japan',
-      reason1Text: 'Our specialists reside in Japan and possess insider knowledge of the culture, history, and hidden gems of the country.',
-      reason2: 'Complete Language Support',
-      reason2Text: 'We provide professional support in Russian and English at all stages of your journey.',
-      reason3: 'Thoughtful Programs',
-      reason3Text: 'Our programs have been developed taking into account travelers\' interests as well as feedback from our clients.',
-      reason4: 'Attention to Detail',
-      reason4Text: 'From route planning to selecting authentic venues - we carefully consider every aspect of your journey.',
-      ourPartners: 'Our Partners',
       testimonials: 'What Our Clients Say',
+      faqSection: 'Frequently Asked Questions',
       readyToExplore: 'Ready to Explore Japan?',
       startYourJourney: 'Start Your Journey with Us Today',
       contactUs: 'Contact Us',
@@ -108,18 +93,9 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
       valueQualityText: '私たちのサービスのすべての側面で高い品質基準を維持します。',
       valueRespect: '文化的敬意',
       valueRespectText: '日本文化を深く尊重し、責任ある観光を促進します。',
-      whyChooseUs: '私たちを選ぶ理由',
       whyChooseUsText: '大量観光の時代において、私たちは日本旅行への個別アプローチを提供します。私たちのチームは、観光業界の専門知識を持つだけでなく、日本の文化と精神性への深い理解を持つ資格のある専門家で構成されています。',
-      reason1: '日本の専門知識',
-      reason1Text: '私たちの専門家は日本に住んでおり、国の文化、歴史、隠れた宝石についての内部者の知識を持っています。',
-      reason2: '完全な言語サポート',
-      reason2Text: '旅のすべての段階でロシア語と英語での専門的なサポートを提供します。',
-      reason3: '思慮深いプログラム',
-      reason3Text: '私たちのプログラムは、旅行者の興味とお客様のフィードバックを考慮して開発されています。',
-      reason4: '細部への配慮',
-      reason4Text: 'ルート計画から本格的な場所の選択まで - あなたの旅のあらゆる側面を慎重に検討します。',
-      ourPartners: '私たちのパートナー',
       testimonials: 'お客様の声',
+      faqSection: 'よくある質問',
       readyToExplore: '日本を探検する準備はできましたか？',
       startYourJourney: '今日から私たちと一緒に旅を始めましょう',
       contactUs: 'お問い合わせ',
@@ -219,78 +195,26 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* Why Choose Us Section - заменяем на компонент */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">{t.whyChooseUs}</h2>
-              <p className="text-gray-600 mb-8">{t.whyChooseUsText}</p>
+          <p className="text-gray-600 mb-8 max-w-4xl mx-auto text-center">{t.whyChooseUsText}</p>
+          <WhyChooseUs currentLang={currentLang} variant="grid" />
+        </div>
+      </section>
 
-              <div className="space-y-6">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-pink-500 text-xl">🗺️</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{t.reason1}</h3>
-                    <p className="text-gray-600">{t.reason1Text}</p>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-500 text-xl">💬</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{t.reason2}</h3>
-                    <p className="text-gray-600">{t.reason2Text}</p>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <span className="text-green-500 text-xl">👤</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{t.reason3}</h3>
-                    <p className="text-gray-600">{t.reason3Text}</p>
-                  </div>
-                </div>
-
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <span className="text-purple-500 text-xl">✨</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{t.reason4}</h3>
-                    <p className="text-gray-600">{t.reason4Text}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <img
-                src="https://source.unsplash.com/featured/?japan,travel,guide"
-                alt="Tour guide in Japan"
-                className="rounded-lg shadow-lg w-full h-auto"
-              />
-            </div>
+      {/* FAQ Section */}
+      <section id="faq-section" className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.faqSection}</h2>
+          <div className="max-w-4xl mx-auto">
+            <FAQ currentLang={currentLang} variant="full" />
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 bg-gray-50">
+      <section id="testimonials" className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">{t.testimonials}</h2>
 
@@ -304,9 +228,9 @@ function AboutPage({ currentLang, setCurrentLang, navigateTo }) {
           />
         </div>
       </section>
-      
+
       {/* Call to Action Section */}
-      <section className="py-16 bg-cover bg-center" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://source.unsplash.com/featured/?japan,sakura)' }}>
+      <section className="py-16 bg-cover bg-center" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/images/hero/hitachi.webp)', }}>
         <div className="container mx-auto px-4 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">{t.readyToExplore}</h2>
           <p className="text-xl mb-8 max-w-3xl mx-auto">{t.startYourJourney}</p>

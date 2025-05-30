@@ -9,9 +9,11 @@ import {
   Users
 } from 'lucide-react';
 import TourCard from '../components/TourCard';
+import WhyChooseUs from '../components/WhyChooseUs';
 import { toursData } from '../data/toursData';
 import ReviewsSection from '../components/ReviewsSection';
 import { useAppContext } from '../context/AppContext';
+
 function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
   const { setSelectedTour } = useAppContext(); // Добавить эту строку
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -34,25 +36,6 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         groupSize: 'Размер группы',
         people: 'человек',
         bookNow: 'Забронировать'
-      },
-      whyChooseUs: {
-        title: 'Почему выбирают нас',
-        reason1: {
-          title: 'Локальные эксперты',
-          description: 'Наши гиды живут в Японии и знают все секретные места'
-        },
-        reason2: {
-          title: 'Языковая поддержка',
-          description: 'Никаких языковых барьеров с русскоговорящими и англоговорящими гидами'
-        },
-        reason3: {
-          title: 'Аутентичный опыт',
-          description: 'Погрузитесь в настоящую японскую культуру, а не в туристические клише'
-        },
-        reason4: {
-          title: 'Персонализированный сервис',
-          description: 'Мы учитываем все ваши предпочтения и интересы'
-        }
       },
       destinations: {
         title: 'Популярные направления',
@@ -106,25 +89,6 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         people: 'people',
         bookNow: 'Book Now'
       },
-      whyChooseUs: {
-        title: 'Why Choose Us',
-        reason1: {
-          title: 'Local Experts',
-          description: 'Our guides live in Japan and know all the secret spots'
-        },
-        reason2: {
-          title: 'Language Support',
-          description: 'No language barriers with Russian and English speaking guides'
-        },
-        reason3: {
-          title: 'Authentic Experience',
-          description: 'Immerse in real Japanese culture, not tourist clichés'
-        },
-        reason4: {
-          title: 'Personalized Service',
-          description: 'We take into account all your preferences and interests'
-        }
-      },
       destinations: {
         title: 'Popular Destinations',
         viewAll: 'View All'
@@ -176,25 +140,6 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         groupSize: 'グループサイズ',
         people: '人',
         bookNow: '今すぐ予約'
-      },
-      whyChooseUs: {
-        title: '選ばれる理由',
-        reason1: {
-          title: '現地のエキスパート',
-          description: '私たちのガイドは日本に住んでおり、すべての隠れた名所を知っています'
-        },
-        reason2: {
-          title: '言語サポート',
-          description: 'ロシア語と英語を話すガイドで言語の壁はありません'
-        },
-        reason3: {
-          title: '本物の体験',
-          description: '観光客向けのクリシェではなく、本物の日本文化に浸ってください'
-        },
-        reason4: {
-          title: 'パーソナライズされたサービス',
-          description: 'あなたのすべての好みと興味を考慮します'
-        },
       },
       destinations: {
         title: '人気の目的地',
@@ -412,47 +357,8 @@ function HomePage({ currentLang, setCurrentLang, navigateTo, bookTour }) {
         </div>
       </section>
 
-
-      {/* Why Choose Us Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">{t.whyChooseUs.title}</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-pink-500 text-2xl">🗺️</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.whyChooseUs.reason1.title}</h3>
-              <p className="text-gray-600">{t.whyChooseUs.reason1.description}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-blue-500 text-2xl">💬</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.whyChooseUs.reason2.title}</h3>
-              <p className="text-gray-600">{t.whyChooseUs.reason2.description}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-green-500 text-2xl">❤️</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.whyChooseUs.reason3.title}</h3>
-              <p className="text-gray-600">{t.whyChooseUs.reason3.description}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-purple-500 text-2xl">👥</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.whyChooseUs.reason4.title}</h3>
-              <p className="text-gray-600">{t.whyChooseUs.reason4.description}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Why Choose Us Section - заменяем на компонент */}
+      <WhyChooseUs currentLang={currentLang} variant="grid" />
 
       {/* Popular Destinations */}
       <section className="py-16 bg-gray-50">

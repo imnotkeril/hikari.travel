@@ -17,11 +17,13 @@ function Footer({ currentLang, navigateTo }) {
         copyright: 'Все права защищены',
         terms: 'Условия использования',
         privacy: 'Политика конфиденциальности',
+        faq: 'Часто задаваемые вопросы',
         adminLogin: 'Вход для администратора'
       },
       menu: {
         home: 'Главная',
         tours: 'Туры',
+        services: 'Услуги',
         about: 'О нас',
         contact: 'Контакты'
       }
@@ -39,11 +41,13 @@ function Footer({ currentLang, navigateTo }) {
         copyright: 'All Rights Reserved',
         terms: 'Terms of Service',
         privacy: 'Privacy Policy',
+        faq: 'FAQ',
         adminLogin: 'Admin Login'
       },
       menu: {
         home: 'Home',
         tours: 'Tours',
+        services: 'Services',
         about: 'About',
         contact: 'Contact'
       }
@@ -61,11 +65,13 @@ function Footer({ currentLang, navigateTo }) {
         copyright: '全著作権所有',
         terms: '利用規約',
         privacy: 'プライバシーポリシー',
+        faq: 'よくある質問',
         adminLogin: '管理者ログイン'
       },
       menu: {
         home: 'ホーム',
         tours: 'ツアー',
+        services: 'サービス',
         about: '会社概要',
         contact: 'お問い合わせ'
       }
@@ -73,10 +79,15 @@ function Footer({ currentLang, navigateTo }) {
   };
 
   const t = translations[currentLang];
-  
-  const handleNavigation = (page, event) => {
+
+  const handleNavigation = (page, event, anchor = null) => {
     event.preventDefault();
-    navigateTo(page);
+    if (anchor) {
+      // Для навигации с якорем используем специальный формат
+      navigateTo(page, anchor);
+    } else {
+      navigateTo(page);
+    }
   };
 
   return (
@@ -107,17 +118,18 @@ function Footer({ currentLang, navigateTo }) {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-xl font-bold mb-4">{t.footer.quickLinks}</h3>
             <ul className="space-y-2">
               <li><a href="#" onClick={(e) => handleNavigation('home', e)} className="text-gray-400 hover:text-white">{t.menu.home}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('tours', e)} className="text-gray-400 hover:text-white">{t.menu.tours}</a></li>
+              <li><a href="#" onClick={(e) => handleNavigation('services', e)} className="text-gray-400 hover:text-white">{t.menu.services}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('about', e)} className="text-gray-400 hover:text-white">{t.menu.about}</a></li>
               <li><a href="#" onClick={(e) => handleNavigation('contact', e)} className="text-gray-400 hover:text-white">{t.menu.contact}</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-xl font-bold mb-4">{t.footer.contact}</h3>
             <ul className="space-y-2">
@@ -126,15 +138,15 @@ function Footer({ currentLang, navigateTo }) {
               <li className="text-gray-400">+81 80-8212-0821</li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-xl font-bold mb-4">{t.footer.subscribe}</h3>
             <p className="text-gray-400 mb-4">{t.footer.subscribeText}</p>
             <form className="flex">
-              <input 
-                type="email" 
-                placeholder={t.footer.emailPlaceholder} 
-                className="px-4 py-2 w-full rounded-l-md focus:outline-none focus:ring-2 focus:ring-pink-500" 
+              <input
+                type="email"
+                placeholder={t.footer.emailPlaceholder}
+                className="px-4 py-2 w-full rounded-l-md focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-800"
               />
               <button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-r-md">
                 {t.footer.subscribeButton}
@@ -142,12 +154,17 @@ function Footer({ currentLang, navigateTo }) {
             </form>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between">
           <p className="text-gray-400 text-center md:text-left">© 2025 Hikari Travel. {t.footer.copyright}</p>
-          <div className="flex space-x-4 justify-center md:justify-end mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white text-sm">{t.footer.terms}</a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm">{t.footer.privacy}</a>
+          <div className="flex flex-wrap space-x-4 justify-center md:justify-end mt-4 md:mt-0">
+            <a
+              href="#"
+              onClick={(e) => handleNavigation('about', e, 'faq-section')}
+              className="text-gray-400 hover:text-white text-sm"
+            >
+              {t.footer.faq}
+            </a>
             <a href="#" onClick={(e) => handleNavigation('login', e)} className="text-gray-400 hover:text-white text-sm">{t.footer.adminLogin}</a>
           </div>
         </div>
